@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { MapPreview } from './components/MapPreview';
+import { GtfsInspector } from './components/GtfsInspector';
 import { PrimaryNavigation } from './components/PrimaryNavigation';
 import { StateNotice } from './components/StateNotice';
 import type { AppView } from './types/app';
@@ -24,6 +25,12 @@ const viewContent: Record<AppView, { eyebrow: string; title: string; description
     title: 'Tus lugares guardados',
     description:
       'En próximas fases vas a poder guardar paradas y lugares cuando exista un catálogo verificado.',
+  },
+  data: {
+    eyebrow: 'DATOS Y VALIDACIÓN',
+    title: 'Revisá un conjunto de transporte',
+    description:
+      'Prepará y revisá archivos GTFS localmente. Este inspector no conecta fuentes ni activa datos en el mapa.',
   },
   info: {
     eyebrow: 'TRANSPARENCIA',
@@ -94,19 +101,19 @@ export function App() {
             <h1 id="welcome-title">Una forma más clara de moverte por Salta.</h1>
             <p className="welcome-description">
               Estamos construyendo una experiencia de movilidad más sencilla. Esta versión permite
-              recorrer la interfaz, pero todavía no consulta recorridos, horarios ni posiciones
-              reales.
+              usar el mapa base y revisar archivos de transporte localmente. Todavía no consulta recorridos,
+              horarios ni posiciones reales de SAETA.
             </p>
             <p className="independence-note">
               SAETA MAPS es un proyecto independiente. No es una aplicación oficial ni está afiliada
               a SAETA.
             </p>
           </div>
-          <div className="phase-stamp" aria-label="Fase 2: diseño y experiencia">
-            <span className="phase-stamp-number">02</span>
+          <div className="phase-stamp" aria-label="Fase 5: datos y validación local">
+            <span className="phase-stamp-number">05</span>
             <span className="phase-stamp-copy">
               <strong>Fase actual</strong>
-              <span>Diseño y experiencia</span>
+              <span>Datos y validación local</span>
             </span>
           </div>
         </section>
@@ -264,7 +271,7 @@ export function App() {
                   </li>
                   <li>
                     <span>Mapa y ubicación</span>
-                    <strong>Fase posterior</strong>
+                    <strong>Mapa base disponible; sin datos SAETA</strong>
                   </li>
                   <li>
                     <span>Horarios, alertas y recargas</span>
@@ -277,6 +284,7 @@ export function App() {
                 </p>
               </div>
             )}
+            {activeView === 'data' && <GtfsInspector />}
           </section>
 
           <div className="visual-column">
