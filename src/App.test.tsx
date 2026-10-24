@@ -47,7 +47,7 @@ describe('App', () => {
     fireEvent.click(getByRole('button', { name: 'Información' }));
     expect(getByRole('heading', { name: 'Estado de la información' })).toBeInTheDocument();
     expect(getByText('Pendientes de verificación')).toBeInTheDocument();
-    expect(getByText('No conectados')).toBeInTheDocument();
+    expect(getByText('Aún sin integración')).toBeInTheDocument();
   });
 
   it('provides accessible loading and error patterns for future services', () => {
