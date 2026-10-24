@@ -2,6 +2,7 @@ import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
+  base: process.env.GITHUB_ACTIONS === 'true' ? '/Saeta/' : '/',
   plugins: [react()],
   test: {
     environment: 'jsdom',
