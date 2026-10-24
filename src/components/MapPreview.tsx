@@ -46,9 +46,7 @@ export function MapPreview() {
     locationLayerRef.current = locationLayer;
 
     const resizeObserver =
-      typeof ResizeObserver === 'undefined'
-        ? null
-        : new ResizeObserver(() => map.invalidateSize());
+      typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(() => map.invalidateSize());
     resizeObserver?.observe(element);
 
     return () => {
@@ -144,7 +142,8 @@ export function MapPreview() {
 
       {locationStatus === 'requesting' && (
         <StateNotice kind="loading" title="Esperando permiso y ubicación">
-          El navegador puede pedirte permiso. No hace falta compartir tu ubicación para usar el mapa.
+          El navegador puede pedirte permiso. No hace falta compartir tu ubicación para usar el
+          mapa.
         </StateNotice>
       )}
       {locationStatus === 'error' && (
@@ -160,10 +159,12 @@ export function MapPreview() {
 
       <p className="map-disclaimer">
         <span className="availability-dot" aria-hidden="true" />
-        Mapa base de OpenStreetMap. No es un mapa de SAETA ni representa ubicaciones reales de colectivos.
+        Mapa base de OpenStreetMap. No es un mapa de SAETA ni representa ubicaciones reales de
+        colectivos.
       </p>
       <p className="map-provider-note">
-        Las solicitudes del mapa cargan las teselas visibles desde el proveedor cartográfico. La ubicación personal solo se solicita cuando tocás el botón.
+        Las solicitudes del mapa cargan las teselas visibles desde el proveedor cartográfico. La
+        ubicación personal solo se solicita cuando tocás el botón.
       </p>
     </section>
   );

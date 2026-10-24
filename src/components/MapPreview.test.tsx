@@ -35,9 +35,13 @@ describe('MapPreview', () => {
 
   it('renders an interactive map container and clearly states the transport-data limit', () => {
     const { getByRole, getByText } = render(<MapPreview />);
-    expect(getByRole('application', { name: 'Mapa interactivo de calles de Salta' })).toBeInTheDocument();
+    expect(
+      getByRole('application', { name: 'Mapa interactivo de calles de Salta' }),
+    ).toBeInTheDocument();
     expect(getByRole('button', { name: 'Usar mi ubicación' })).toBeInTheDocument();
-    expect(getByText(/no es un mapa de SAETA ni representa ubicaciones reales de colectivos/i)).toBeInTheDocument();
+    expect(
+      getByText(/no es un mapa de SAETA ni representa ubicaciones reales de colectivos/i),
+    ).toBeInTheDocument();
   });
 
   it('requests device location only after the user presses the location button', async () => {
@@ -57,7 +61,12 @@ describe('MapPreview', () => {
   it('explains denied permission without blocking the map', async () => {
     const getCurrentPosition = vi.fn(
       (_success: PositionCallback, error: PositionErrorCallback) => {
-        error({ code: 1, PERMISSION_DENIED: 1, POSITION_UNAVAILABLE: 2, TIMEOUT: 3 } as GeolocationPositionError);
+        error({
+          code: 1,
+          PERMISSION_DENIED: 1,
+          POSITION_UNAVAILABLE: 2,
+          TIMEOUT: 3,
+        } as GeolocationPositionError);
       },
     );
     Object.defineProperty(navigator, 'geolocation', {
@@ -68,6 +77,8 @@ describe('MapPreview', () => {
     const { getByRole } = render(<MapPreview />);
     fireEvent.click(getByRole('button', { name: 'Usar mi ubicación' }));
     await waitFor(() => expect(getByRole('alert')).toHaveTextContent(/no se concedió permiso/i));
-    expect(getByRole('application', { name: 'Mapa interactivo de calles de Salta' })).toBeInTheDocument();
+    expect(
+      getByRole('application', { name: 'Mapa interactivo de calles de Salta' }),
+    ).toBeInTheDocument();
   });
 });

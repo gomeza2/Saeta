@@ -26,14 +26,6 @@ jobs:
         run: npm run typecheck
       - name: Check lint
         run: npm run lint
-      - name: Capture canonical formatting
-        run: |
-          npx prettier --write docs/ROADMAP.md src/components/MapPreview.test.tsx src/components/MapPreview.tsx
-          for file in docs/ROADMAP.md src/components/MapPreview.test.tsx src/components/MapPreview.tsx; do
-            echo "BEGIN_FORMATTED_FILE:$file"
-            cat "$file"
-            echo "END_FORMATTED_FILE:$file"
-          done
       - name: Check formatting
         run: npm run format:check
       - name: Run tests
