@@ -60,10 +60,10 @@ export function parseCsvTable(content: string): GtfsTable {
   };
 
   for (let index = 0; index < source.length; index += 1) {
-    const character = source[index];
+    const character = source.charAt(index);
     if (inQuotes) {
       if (character === '"') {
-        if (source[index + 1] === '"') {
+        if (source.charAt(index + 1) === '"') {
           cell += '"';
           index += 1;
         } else {
@@ -88,7 +88,7 @@ export function parseCsvTable(content: string): GtfsTable {
       finishCell();
       recordHasContent = true;
     } else if (character === '\n' || character === '\r') {
-      if (character === '\r' && source[index + 1] === '\n') index += 1;
+      if (character === '\r' && source.charAt(index + 1) === '\n') index += 1;
       finishRecord();
     } else {
       cell += character;
@@ -104,7 +104,7 @@ export function parseCsvTable(content: string): GtfsTable {
     return { headers: [], rows: [], errors: [{ message: 'El archivo está vacío o no contiene registros.' }, ...errors] };
   }
 
-  const headers = records[0].map((header) => header.trim());
+  const headers = (records[0] ?? []).map((header) => header.trim());
   const duplicateHeaders = headers.filter((header, index) => header !== '' && headers.indexOf(header) !== index);
   if (headers.some((header) => header === '')) errors.push({ row: 1, message: 'La cabecera contiene una columna sin nombre.' });
   if (duplicateHeaders.length > 0) errors.push({ row: 1, message: 'La cabecera contiene nombres de columna repetidos.' });
