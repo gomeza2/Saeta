@@ -7,9 +7,9 @@ Los estados reflejan el repositorio y no una promesa de disponibilidad. Una fase
 | 0    | Auditoría y planificación         | Completada: repositorio auditado y hoja de ruta definida.                                                                            |
 | 1    | Base técnica profesional          | Completada: TypeScript, ESLint, Prettier, pruebas y build pasan en GitHub Actions.                                                   |
 | 2    | Diseño del producto y experiencia | Implementada en la rama de fase 2; navegación, formularios honestos, estados accesibles y diseño adaptable. CI aprobado.             |
-| 3    | Mapa y geolocalización            | En implementación: Leaflet, cartografía base atribuida, geolocalización solo por acción explícita y errores accesibles. Sujeta a CI. |
-| 4    | Investigación de datos de SAETA   | Pendiente: fuentes verificadas, cobertura, vigencia, permisos y formatos documentados.                                               |
-| 5    | Líneas, paradas y recorridos      | Pendiente: exploración y selección basadas en datos trazables.                                                                       |
+| 3    | Mapa y geolocalización            | Implementada en la rama de fase 3; mapa interactivo, ubicación por acción explícita y ausencia de datos de transporte declarada. CI verde. |
+| 4    | Investigación de datos de SAETA   | Auditoría pública inicial documentada; no se confirmó un feed reutilizable ni licencia. Falta confirmación formal de los responsables. |
+| 5    | Líneas, paradas y recorridos      | Pendiente: exploración y selección basadas en datos trazables y autorizados.                                                          |
 | 6    | Búsqueda y planificación          | Pendiente: itinerarios comprobables, caminatas y transbordos según datos disponibles.                                                |
 | 7    | GPS y seguimiento                 | Condicionada a una fuente autorizada, válida y reciente.                                                                             |
 | 8    | Horarios y llegadas               | Condicionada a datos suficientes; distinguir horario publicado de predicción.                                                        |

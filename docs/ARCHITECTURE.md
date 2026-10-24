@@ -19,6 +19,7 @@
 - `src/config/`: configuración pública de la aplicación, incluida la URL configurable de teselas.
 - `src/test/`: configuración compartida para pruebas.
 - `src/App.test.tsx`: pruebas de transparencia, navegación y formularios.
+- `docs/DATA_SOURCE_AUDIT.md`: inventario de fuentes públicas revisadas, limitaciones y requisitos de autorización para integrar transporte.
 
 Las futuras funcionalidades se incorporarán en capas independientes a medida que se definan sus fuentes y contratos. No se crean servicios vacíos ni carpetas sin implementación.
 
@@ -42,7 +43,9 @@ El mapa inicia centrado de forma general en Salta y muestra cartografía base re
 
 ## Transporte y adaptadores
 
-Los contratos de datos se definirán a partir de fuentes verificadas, no de endpoints supuestos. Se investigarán formatos abiertos como GTFS y GTFS-Realtime en la fase 4. Las muestras de prueba vivirán separadas del adaptador de producción. Ninguna posición, llegada prevista o alerta se considerará real sin una fuente trazable.
+La auditoría pública inicial quedó registrada en `docs/DATA_SOURCE_AUDIT.md`. En las páginas públicas revisadas se pudo confirmar que SAETA ofrece mapas de corredores, información de paradas, horarios estimativos y planificación de viajes para pasajeros, pero no se confirmó un feed GTFS actual, una API pública documentada ni condiciones de reutilización para una aplicación independiente. Esta conclusión describe lo verificado en la revisión, no demuestra que no existan vías de acceso mediante solicitud formal.
+
+GTFS Schedule y GTFS Realtime son formatos candidatos para evaluar si una fuente autorizada los ofrece; no se presume que SAETA los publique. La integración deberá mantener separados los horarios publicados, las predicciones y las posiciones en tiempo real. Las muestras de prueba vivirán separadas del adaptador de producción y se rotularán como demostración. Ninguna posición, llegada prevista o alerta se considerará real sin una fuente trazable y vigente.
 
 La interfaz actual no consulta servicios externos. Los formularios solo explican el estado de la integración y no generan rutas ficticias ni envían a un servidor los valores introducidos.
 
