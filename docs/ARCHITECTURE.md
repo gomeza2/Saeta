@@ -14,9 +14,9 @@
 - `src/App.tsx`: estado de navegación y composición de la experiencia principal.
 - `src/components/PrimaryNavigation.tsx`: navegación accesible entre vistas.
 - `src/components/StateNotice.tsx`: avisos accesibles para estados de carga, error y funciones aún no disponibles.
-- `src/components/MapPreview.tsx`: espacio de diseño que declara explícitamente que el mapa aún no está conectado.
+- `src/components/MapPreview.tsx`: mapa interactivo con Leaflet, teselas configurables y geolocalización opcional bajo acción explícita.
 - `src/components/TransportStatus.tsx`: estado visible de las integraciones pendientes; no contiene datos de vehículos.
-- `src/config/`: configuración pública de la aplicación.
+- `src/config/`: configuración pública de la aplicación, incluida la URL configurable de teselas.
 - `src/test/`: configuración compartida para pruebas.
 - `src/App.test.tsx`: pruebas de transparencia, navegación y formularios.
 
@@ -36,9 +36,9 @@ Las futuras funcionalidades se incorporarán en capas independientes a medida qu
 
 ## Mapas y geolocalización
 
-La decisión de proveedor se tomará en la fase 3, evaluando cobertura, accesibilidad, disponibilidad de tiles, límites de uso, atribución, coste y comportamiento en dispositivos modestos. Leaflet con fuentes cartográficas compatibles es una alternativa inicial, no una decisión cerrada. La geolocalización solo se solicitará después de una acción clara del usuario; denegarla no deberá impedir usar la aplicación.
+Leaflet es la biblioteca de mapa; las teselas base se configuran con `VITE_MAP_TILE_URL`. La configuración de ejemplo usa el servicio estándar de OpenStreetMap, que exige atribución visible, uso moderado y respeto de caché, y no permite descargas masivas ni mapas sin conexión. Antes de un despliegue público se debe revisar el volumen esperado y elegir un proveedor con condiciones adecuadas; el servicio comunitario no ofrece SLA.
 
-La superficie visual de la fase 2 es una composición abstracta con texto explicativo: no representa calles, coordenadas, paradas ni información geográfica real.
+El mapa inicia centrado de forma general en Salta y muestra cartografía base real, pero no incluye líneas, paradas ni vehículos de SAETA. La ubicación personal se solicita solo cuando el usuario pulsa el botón; se muestra localmente y no se guarda en la app ni se envía a un servicio de transporte. Si se deniega el permiso, el mapa sigue disponible.
 
 ## Transporte y adaptadores
 
