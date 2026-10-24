@@ -996,3 +996,259 @@ a:focus-visible {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Fase 5: inspección local de archivos GTFS. */
+.gtfs-inspector {
+  display: grid;
+  gap: 16px;
+  padding-top: 22px;
+}
+
+.gtfs-inspector-intro h3 {
+  margin: 9px 0 8px;
+  font-size: 19px;
+  font-weight: 750;
+  letter-spacing: -0.035em;
+}
+
+.gtfs-inspector-intro > p:last-child {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.gtfs-privacy-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid #dfe8dc;
+  border-radius: 11px;
+  background: #f7f9f5;
+}
+
+.gtfs-privacy-note > span {
+  display: grid;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+  place-items: center;
+  border-radius: 50%;
+  background: #e5eee1;
+  color: var(--color-green);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.gtfs-privacy-note p {
+  margin: 0;
+  color: #536256;
+  font-size: 11px;
+  line-height: 1.65;
+}
+
+.gtfs-file-picker {
+  display: grid;
+  gap: 9px;
+  padding: 16px;
+  border: 1px dashed #b9cbb6;
+  border-radius: 12px;
+  background: #fbfcfa;
+  cursor: pointer;
+}
+
+.gtfs-file-picker:focus-within {
+  outline: 3px solid #578c68;
+  outline-offset: 3px;
+}
+
+.gtfs-file-picker-title {
+  color: var(--color-green-dark);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.gtfs-file-picker-hint {
+  color: var(--color-muted);
+  font-size: 11px;
+  line-height: 1.65;
+}
+
+.gtfs-file-picker input {
+  width: 100%;
+  min-width: 0;
+  color: var(--color-muted);
+  font-size: 11px;
+}
+
+.gtfs-feedback {
+  margin: 0;
+  padding: 12px;
+  border: 1px solid #dbe5ec;
+  border-radius: 10px;
+  background: #f4f8fb;
+  color: #3f5a70;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.gtfs-feedback-error {
+  border-color: #ecd4cc;
+  background: #fff5f2;
+  color: #8b4733;
+}
+
+.gtfs-report {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+  padding: 15px;
+  border: 1px solid #e3e8e1;
+  border-radius: 13px;
+  background: #ffffff;
+}
+
+.gtfs-report-valid {
+  border-color: #cfdfcc;
+}
+
+.gtfs-report-invalid {
+  border-color: #ecd4cc;
+}
+
+.gtfs-report-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.gtfs-report-heading h4 {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.gtfs-report-heading p {
+  margin: 5px 0 0;
+  color: var(--color-muted);
+  font-size: 11px;
+}
+
+.gtfs-result-pill {
+  display: inline-flex;
+  max-width: 100%;
+  padding: 6px 8px;
+  border-radius: 7px;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.gtfs-result-ok {
+  background: #e8f2e5;
+  color: #2e5c36;
+}
+
+.gtfs-result-error {
+  background: #fbeded;
+  color: #8b3434;
+}
+
+.gtfs-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+
+.gtfs-summary > div {
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid #e8ece6;
+  border-radius: 9px;
+  background: #fbfcfa;
+}
+
+.gtfs-summary dt {
+  color: #778179;
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.gtfs-summary dd {
+  margin: 6px 0 0;
+  color: var(--color-green-dark);
+  font-size: 19px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.gtfs-issues {
+  display: grid;
+  gap: 7px;
+  max-height: 430px;
+  overflow: auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gtfs-issue {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  align-items: start;
+  gap: 9px;
+  padding: 10px;
+  border: 1px solid #e4e9e2;
+  border-radius: 9px;
+  background: #fbfcfa;
+  color: #4f5d52;
+  font-size: 10px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.gtfs-issue > strong {
+  padding: 3px 5px;
+  border-radius: 5px;
+  background: #f9e8e3;
+  color: #85452e;
+  font-size: 9px;
+}
+
+.gtfs-issue-error {
+  border-color: #efddd5;
+}
+
+.gtfs-clean-note {
+  margin: 0;
+  color: #3b6745;
+  font-size: 11px;
+  line-height: 1.65;
+}
+
+.gtfs-report-limit {
+  margin: 0;
+  padding-top: 12px;
+  border-top: 1px solid #edf0eb;
+  color: #7a857c;
+  font-size: 10px;
+  line-height: 1.65;
+}
+
+@media (max-width: 620px) {
+  .gtfs-report {
+    padding: 12px;
+  }
+
+  .gtfs-summary {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .gtfs-issue {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+  }
+}
