@@ -9,6 +9,7 @@ const navigationItems: { id: AppView; label: string }[] = [
   { id: 'explore', label: 'Explorar' },
   { id: 'planner', label: 'Planificar' },
   { id: 'saved', label: 'Guardados' },
+  { id: 'data', label: 'Datos' },
   { id: 'info', label: 'Información' },
 ];
 
