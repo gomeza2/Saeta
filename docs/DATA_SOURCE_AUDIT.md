@@ -12,14 +12,41 @@ Por eso, esta fase no incorpora líneas, paradas, horarios, ubicaciones de vehí
 
 ## Registro de fuentes revisadas
 
-| Fuente | Evidencia pública observada | Evaluación para integración |
-| --- | --- | --- |
-| [Sitio oficial de SAETA](https://saetasalta.ar/) | Publica el acceso a **Corredores**, descrito como mapas, paradas y horarios; también enlaza el planificador de viaje y SAETA APP. | Fuente oficial útil para consulta humana. En la página revisada no se identificó una descarga de datos crudos ni una especificación de API para terceros. |
-| [Preguntas frecuentes de SAETA](https://saetasalta.com.ar/saetaw/faq) | Explica que el planificador ofrece líneas, paradas, transbordos, horarios estimativos y una ruta recomendada. Indica que las paradas se muestran en los mapas de los corredores. | Confirma que la información existe en la experiencia oficial para pasajeros, no que pueda reutilizarse técnicamente. |
-| [Información institucional de SAETA](https://saetasalta.ar/web/empresa) | Describe la integración de recorridos urbanos y metropolitanos con Google Maps y señala que SAETA APP permite consultar posiciones de coches en tiempo real. | La función de tiempo real dentro de una app oficial no demuestra que haya un feed abierto o una API autorizada para aplicaciones independientes. |
-| [Portal provincial de datos abiertos](https://datospublicos.salta.gob.ar/dataset) | La página consultada durante esta revisión devolvió que no se encontraron resultados. El portal utiliza contenido dinámico, por lo que la observación puede depender de la búsqueda o del estado del catálogo. | No se confirmó un dataset de transporte reutilizable desde esta consulta. No debe interpretarse como prueba de inexistencia de datos por cualquier otra vía. |
-| [Catálogo de datos abiertos de IDEMSa](https://idemsa.municipalidadsalta.gob.ar/datos-abiertos.php) | El catálogo contempla exportaciones por capa en CSV, GeoJSON y KML, pero la vista pública consultada no permitió identificar con certeza una capa de líneas/paradas de SAETA ni confirmar su licencia. | Pista para seguimiento con el municipio; hace falta identificar la capa exacta, su fecha, cobertura, licencia y responsable. |
-| [Índice histórico de datos de transporte de Salta](https://ar-cities.survey.okfn.org/entry/salta/transport.html) | Una ficha histórica, modificada en 2018, menciona un portal municipal de recorridos y formatos CSV/GML, con licencia desconocida. | Pista antigua, no evidencia de disponibilidad actual ni autorización para reutilización. Requiere verificación directa antes de usarla. |
+### 1. [Sitio oficial de SAETA](https://saetasalta.ar/)
+
+**Evidencia:** publica el acceso a **Corredores**, descrito como mapas, paradas y horarios; también enlaza el planificador de viaje y SAETA APP.
+
+**Evaluación:** fuente oficial útil para consulta humana. En la página revisada no se identificó una descarga de datos crudos ni una especificación de API para terceros.
+
+### 2. [Preguntas frecuentes de SAETA](https://saetasalta.com.ar/saetaw/faq)
+
+**Evidencia:** explica que el planificador ofrece líneas, paradas, transbordos, horarios estimativos y una ruta recomendada. Indica que las paradas se muestran en los mapas de los corredores.
+
+**Evaluación:** confirma que la información existe en la experiencia oficial para pasajeros, no que pueda reutilizarse técnicamente.
+
+### 3. [Información institucional de SAETA](https://saetasalta.ar/web/empresa)
+
+**Evidencia:** describe la integración de recorridos urbanos y metropolitanos con Google Maps y señala que SAETA APP permite consultar posiciones de coches en tiempo real.
+
+**Evaluación:** la función de tiempo real dentro de una app oficial no demuestra que haya un feed abierto o una API autorizada para aplicaciones independientes.
+
+### 4. [Portal provincial de datos abiertos](https://datospublicos.salta.gob.ar/dataset)
+
+**Evidencia:** la página consultada durante esta revisión devolvió que no se encontraron resultados. El portal utiliza contenido dinámico, por lo que la observación puede depender de la búsqueda o del estado del catálogo.
+
+**Evaluación:** no se confirmó un dataset de transporte reutilizable desde esta consulta. No debe interpretarse como prueba de inexistencia de datos por cualquier otra vía.
+
+### 5. [Catálogo de datos abiertos de IDEMSa](https://idemsa.municipalidadsalta.gob.ar/datos-abiertos.php)
+
+**Evidencia:** el catálogo contempla exportaciones por capa en CSV, GeoJSON y KML, pero la vista pública consultada no permitió identificar con certeza una capa de líneas/paradas de SAETA ni confirmar su licencia.
+
+**Evaluación:** pista para seguimiento con el municipio; hace falta identificar la capa exacta, su fecha, cobertura, licencia y responsable.
+
+### 6. [Índice histórico de datos de transporte de Salta](https://ar-cities.survey.okfn.org/entry/salta/transport.html)
+
+**Evidencia:** una ficha histórica, modificada en 2018, menciona un portal municipal de recorridos y formatos CSV/GML, con licencia desconocida.
+
+**Evaluación:** pista antigua, no evidencia de disponibilidad actual ni autorización para reutilización. Requiere verificación directa antes de usarla.
 
 ## Diferencia entre web pública y fuente integrable
 
