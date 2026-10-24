@@ -258,7 +258,7 @@ export function App() {
                   </li>
                   <li>
                     <span>Horarios, alertas y recargas</span>
-                    <strong>No conectados</strong>
+                    <strong>Aún sin integración</strong>
                   </li>
                 </ul>
                 <p className="field-hint">
