@@ -364,7 +364,10 @@ a:focus-visible {
   line-height: 1.6;
 }
 
-.feedback-message {
+.state-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
   margin: 13px 0 0;
   padding: 12px 13px;
   border: 1px solid #e3e9dc;
@@ -373,6 +376,62 @@ a:focus-visible {
   color: #405c46;
   font-size: 11px;
   line-height: 1.65;
+}
+
+.state-notice-symbol {
+  display: grid;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  place-items: center;
+  border-radius: 50%;
+  background: #e2ebde;
+  color: #345840;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.state-notice-copy {
+  min-width: 0;
+}
+
+.state-notice-copy strong {
+  display: block;
+  margin-bottom: 3px;
+  color: #324b39;
+  font-size: 11px;
+}
+
+.state-notice-copy p {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.65;
+}
+
+.state-notice-loading {
+  border-color: #dce5ee;
+  background: #f3f7fb;
+  color: #40566d;
+}
+
+.state-notice-loading .state-notice-symbol {
+  background: #e1eaf5;
+  color: #335979;
+}
+
+.state-notice-error {
+  border-color: #ecd4cc;
+  background: #fff5f2;
+  color: #8b4733;
+}
+
+.state-notice-error .state-notice-symbol {
+  background: #f8e1d8;
+  color: #8b4733;
+}
+
+.state-notice-error .state-notice-copy strong {
+  color: #8b4733;
 }
 
 .quick-actions {

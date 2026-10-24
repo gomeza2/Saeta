@@ -13,6 +13,7 @@
 
 - `src/App.tsx`: estado de navegación y composición de la experiencia principal.
 - `src/components/PrimaryNavigation.tsx`: navegación accesible entre vistas.
+- `src/components/StateNotice.tsx`: avisos accesibles para estados de carga, error y funciones aún no disponibles.
 - `src/components/MapPreview.tsx`: espacio de diseño que declara explícitamente que el mapa aún no está conectado.
 - `src/components/TransportStatus.tsx`: estado visible de las integraciones pendientes; no contiene datos de vehículos.
 - `src/config/`: configuración pública de la aplicación.

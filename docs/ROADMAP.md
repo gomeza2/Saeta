@@ -6,7 +6,7 @@ Los estados reflejan el repositorio y no una promesa de disponibilidad. Una fase
 |---|---|---|
 | 0 | Auditoría y planificación | Completada: repositorio auditado y hoja de ruta definida. |
 | 1 | Base técnica profesional | Completada: TypeScript, ESLint, Prettier, pruebas y build pasan en GitHub Actions. |
-| 2 | Diseño del producto y experiencia | En implementación: navegación entre pantallas, formularios con estados informativos, diseño adaptable y transparencia sobre funciones pendientes. |
+| 2 | Diseño del producto y experiencia | En implementación: navegación entre pantallas, formularios, estados accesibles de carga/error/no disponibilidad, diseño adaptable y transparencia. |
 | 3 | Mapa y geolocalización | Pendiente: mapa interactivo real, permisos explícitos y atribución correcta. |
 | 4 | Investigación de datos de SAETA | Pendiente: fuentes verificadas, cobertura, vigencia, permisos y formatos documentados. |
 | 5 | Líneas, paradas y recorridos | Pendiente: exploración y selección basadas en datos trazables. |

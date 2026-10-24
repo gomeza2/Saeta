@@ -1,6 +1,8 @@
 import { useState, type FormEvent } from 'react';
 import { MapPreview } from './components/MapPreview';
-import { PrimaryNavigation, type AppView } from './components/PrimaryNavigation';
+import { PrimaryNavigation } from './components/PrimaryNavigation';
+import { StateNotice } from './components/StateNotice';
+import type { AppView } from './types/app';
 import { TransportStatus } from './components/TransportStatus';
 import { appConfig } from './config/env';
 
@@ -30,8 +32,6 @@ const viewContent: Record<AppView, { eyebrow: string; title: string; description
       'Consultá qué partes del producto están preparadas y qué servicios todavía no están conectados.',
   },
 };
-
-export type { AppView };
 
 export function App() {
   const [activeView, setActiveView] = useState<AppView>('explore');
@@ -137,9 +137,9 @@ export function App() {
                     El campo es interactivo, pero todavía no busca en datos de transporte.
                   </p>
                   {searchFeedback && (
-                    <p className="feedback-message" role="status">
+                    <StateNotice kind="unavailable" title="Búsqueda no disponible todavía">
                       {searchFeedback}
-                    </p>
+                    </StateNotice>
                   )}
                 </form>
 
@@ -213,9 +213,9 @@ export function App() {
                   En esta fase los campos funcionan solo en tu navegador: no se envían a un servicio.
                 </p>
                 {plannerFeedback && (
-                  <p className="feedback-message" role="status">
+                  <StateNotice kind="unavailable" title="Planificación no disponible todavía">
                     {plannerFeedback}
-                  </p>
+                  </StateNotice>
                 )}
               </form>
             )}

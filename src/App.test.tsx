@@ -1,6 +1,7 @@
 import { fireEvent, render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { App } from './App';
+import { StateNotice } from './components/StateNotice';
 
 describe('App', () => {
   it('identifies the project as independent and does not claim live transport data', () => {
@@ -45,5 +46,26 @@ describe('App', () => {
     expect(getByRole('heading', { name: 'Estado de la información' })).toBeInTheDocument();
     expect(getByText('Pendientes de verificación')).toBeInTheDocument();
     expect(getByText('No conectados')).toBeInTheDocument();
+  });
+});
+
+  it('provides accessible loading and error patterns for future services', () => {
+    const { getByRole, rerender } = render(
+      <StateNotice kind="loading" title="Cargando recorridos">
+        Estamos consultando la fuente de transporte.
+      </StateNotice>,
+    );
+
+    expect(getByRole('status')).toHaveTextContent('Cargando recorridos');
+    expect(getByRole('status')).toHaveTextContent('Estamos consultando la fuente de transporte.');
+
+    rerender(
+      <StateNotice kind="error" title="No se pudo cargar">
+        La fuente no respondió.
+      </StateNotice>,
+    );
+
+    expect(getByRole('alert')).toHaveTextContent('No se pudo cargar');
+    expect(getByRole('alert')).toHaveTextContent('La fuente no respondió.');
   });
 });

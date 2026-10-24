@@ -31,6 +31,7 @@ En Windows PowerShell, el paso de copiar el archivo se puede hacer con `Copy-Ite
 
 - Navegación por Explorar, Planificar, Guardados e Información.
 - Formularios con mensajes explícitos cuando no hay fuentes de transporte conectadas.
+- Patrones de estado accesibles para carga, error, contenido vacío y funciones no disponibles.
 - Panel de estado de integraciones y un espacio cartográfico de diseño que no muestra calles ni ubicaciones ficticias.
 - Diseño adaptable, controles con foco visible y navegación compatible con teclado.
 
