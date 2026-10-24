@@ -59,16 +59,14 @@ describe('MapPreview', () => {
   });
 
   it('explains denied permission without blocking the map', async () => {
-    const getCurrentPosition = vi.fn(
-      (_success: PositionCallback, error: PositionErrorCallback) => {
-        error({
-          code: 1,
-          PERMISSION_DENIED: 1,
-          POSITION_UNAVAILABLE: 2,
-          TIMEOUT: 3,
-        } as GeolocationPositionError);
-      },
-    );
+    const getCurrentPosition = vi.fn((_success: PositionCallback, error: PositionErrorCallback) => {
+      error({
+        code: 1,
+        PERMISSION_DENIED: 1,
+        POSITION_UNAVAILABLE: 2,
+        TIMEOUT: 3,
+      } as GeolocationPositionError);
+    });
     Object.defineProperty(navigator, 'geolocation', {
       configurable: true,
       value: { getCurrentPosition },
