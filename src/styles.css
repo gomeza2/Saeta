@@ -1,5 +1,12 @@
 :root {
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
   color: #202a25;
   background: #f7f8f5;
   font-synthesis: none;
@@ -16,7 +23,9 @@
   --surface: #fff;
 }
 
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
 body {
   min-width: 320px;
@@ -24,9 +33,14 @@ body {
   margin: 0;
 }
 
-a { color: inherit; }
+a {
+  color: inherit;
+}
 
-button, a { -webkit-tap-highlight-color: transparent; }
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
 
 :focus-visible {
   outline: 3px solid #52866a;
@@ -86,7 +100,8 @@ button, a { -webkit-tap-highlight-color: transparent; }
   padding: clamp(64px, 10vw, 112px) 0 68px;
 }
 
-.eyebrow, .section-kicker {
+.eyebrow,
+.section-kicker {
   margin: 0;
   color: var(--color-green);
   font-size: 11px;
@@ -117,7 +132,9 @@ button, a { -webkit-tap-highlight-color: transparent; }
   line-height: 1.06;
 }
 
-.hero h1 span { color: var(--color-green); }
+.hero h1 span {
+  color: var(--color-green);
+}
 
 .hero-description {
   max-width: 660px;
@@ -159,7 +176,9 @@ button, a { -webkit-tap-highlight-color: transparent; }
   line-height: 1.65;
 }
 
-.notice strong { color: var(--color-ink); }
+.notice strong {
+  color: var(--color-ink);
+}
 
 .foundation {
   padding: 30px 32px 26px;
@@ -227,7 +246,10 @@ button, a { -webkit-tap-highlight-color: transparent; }
   font-size: 16px;
 }
 
-.status-copy { min-width: 0; flex: 1; }
+.status-copy {
+  min-width: 0;
+  flex: 1;
+}
 
 .status-copy h3 {
   margin: 0 0 5px;
@@ -249,7 +271,9 @@ button, a { -webkit-tap-highlight-color: transparent; }
   font-weight: 650;
 }
 
-.status-label.ready { color: var(--color-green); }
+.status-label.ready {
+  color: var(--color-green);
+}
 
 .footer {
   display: flex;
@@ -267,27 +291,60 @@ button, a { -webkit-tap-highlight-color: transparent; }
 }
 
 @media (max-width: 640px) {
-  .page-shell { width: min(100% - 32px, 1120px); }
-  .topbar { min-height: 72px; }
-  .environment-tag { padding: 7px 9px; font-size: 10px; }
-  .hero { padding: 66px 0 46px; }
-  .hero-description { font-size: 15px; }
-  .notice { padding: 15px; }
-  .foundation { padding: 23px 18px 12px; border-radius: 16px; }
-  .section-heading { align-items: flex-start; flex-direction: column; gap: 14px; }
-  .status-item { align-items: flex-start; gap: 11px; }
+  .page-shell {
+    width: min(100% - 32px, 1120px);
+  }
+  .topbar {
+    min-height: 72px;
+  }
+  .environment-tag {
+    padding: 7px 9px;
+    font-size: 10px;
+  }
+  .hero {
+    padding: 66px 0 46px;
+  }
+  .hero-description {
+    font-size: 15px;
+  }
+  .notice {
+    padding: 15px;
+  }
+  .foundation {
+    padding: 23px 18px 12px;
+    border-radius: 16px;
+  }
+  .section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .status-item {
+    align-items: flex-start;
+    gap: 11px;
+  }
   .status-number {
     flex-basis: 32px;
     width: 32px;
     height: 32px;
     border-radius: 10px;
   }
-  .status-label { max-width: 88px; padding-top: 4px; text-align: right; white-space: normal; }
-  .footer { flex-direction: column; gap: 8px; }
+  .status-label {
+    max-width: 88px;
+    padding-top: 4px;
+    text-align: right;
+    white-space: normal;
+  }
+  .footer {
+    flex-direction: column;
+    gap: 8px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     scroll-behavior: auto !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;

@@ -33,7 +33,9 @@ export function App() {
     <main className="page-shell">
       <header className="topbar">
         <a className="brand" href="#inicio" aria-label={appConfig.name + ', inicio'}>
-          <span className="brand-mark" aria-hidden="true">S</span>
+          <span className="brand-mark" aria-hidden="true">
+            S
+          </span>
           <span className="brand-wordmark">{appConfig.name}</span>
         </a>
         <span className="environment-tag">Proyecto independiente</span>
@@ -49,12 +51,14 @@ export function App() {
           <span> con más claridad.</span>
         </h1>
         <p className="hero-description">
-          Estamos preparando una experiencia sencilla para explorar opciones de transporte y planificar
-          viajes por Salta. La información real se incorporará únicamente cuando sus fuentes y
-          condiciones de uso estén verificadas.
+          Estamos preparando una experiencia sencilla para explorar opciones de transporte y
+          planificar viajes por Salta. La información real se incorporará únicamente cuando sus
+          fuentes y condiciones de uso estén verificadas.
         </p>
         <div className="notice" role="status">
-          <span className="notice-icon" aria-hidden="true">i</span>
+          <span className="notice-icon" aria-hidden="true">
+            i
+          </span>
           <p>
             <strong>Versión inicial de desarrollo.</strong> Este proyecto es independiente y no está
             afiliado ni representa una aplicación oficial de SAETA. Todavía no ofrece recorridos,
