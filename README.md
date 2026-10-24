@@ -1,48 +1,85 @@
 # SAETA MAPS
 
-SAETA MAPS es un proyecto independiente en desarrollo para ayudar a explorar opciones de movilidad urbana en Salta, Argentina. No es una aplicación oficial de SAETA ni está afiliado a esa organización.
+SAETA MAPS es una aplicación web independiente en desarrollo para explorar opciones de movilidad urbana en Salta, Argentina. **No es una aplicación oficial de SAETA ni está afiliada a esa organización.**
 
-**Estado actual:** Fase 2, diseño interactivo. La navegación y los formularios permiten explorar la interfaz, pero aún no existen búsquedas reales, mapa operativo, recorridos, horarios, posiciones GPS, alertas ni recargas.
+## Estado del proyecto
+
+Las fases 1 a 4 ya están integradas en `main`.
+
+- **Base técnica:** React, TypeScript, Vite, ESLint, Prettier y Vitest.
+- **Interfaz:** navegación por Explorar, Planificar, Guardados e Información.
+- **Mapa:** cartografía interactiva con Leaflet y OpenStreetMap, centrada de forma general en Salta.
+- **Geolocalización:** solo se solicita después de que la persona pulse la acción correspondiente.
+- **Transparencia de datos:** documentación sobre las fuentes revisadas y los límites de integración.
+
+### Qué funciona y qué falta
+
+El mapa base puede mostrar calles reales, pero **todavía no están integrados los datos de transporte de SAETA**. No hay búsquedas reales de líneas/paradas, cálculo real de itinerarios, horarios verificados, posiciones en vivo de colectivos, alertas ni recargas. Los formularios y estados de la interfaz no deben interpretarse como un servicio de transporte operativo.
+
+No se inventan líneas, paradas, horarios ni ubicaciones. La integración de transporte queda pendiente de identificar y validar una fuente oficial o autorizada, junto con sus condiciones de uso, cobertura y frecuencia de actualización. Ver [la auditoría de fuentes](docs/DATA_SOURCE_AUDIT.md).
 
 ## Requisitos
 
 - Node.js 22.12.0 o superior.
-- npm incluido con Node.js.
+- npm.
 
-## Instalación y ejecución
+## Instalación y ejecución local
 
-1. Cloná el repositorio y entrá en su carpeta.
-2. Ejecutá `npm install`.
-3. Copiá `.env.example` a `.env.local`.
-4. Ejecutá `npm run dev` y abrí en el navegador la dirección que muestre la terminal.
+1. Cloná este repositorio y entrá en la carpeta:
 
-En Windows PowerShell, el paso de copiar el archivo se puede hacer con `Copy-Item .env.example .env.local`.
+   ```bash
+   git clone https://github.com/gomeza2/Saeta.git
+   cd Saeta
+   ```
+
+2. Instalá las dependencias:
+
+   ```bash
+   npm install
+   ```
+
+3. Copiá `.env.example` a `.env.local`. En Windows PowerShell:
+
+   ```powershell
+   Copy-Item .env.example .env.local
+   ```
+
+4. Iniciá el servidor de desarrollo:
+
+   ```bash
+   npm run dev
+   ```
+
+5. Abrí en el navegador la dirección local que indique Vite.
+
+Se necesita conexión a Internet para cargar las teselas del mapa base. La disponibilidad del mapa depende del proveedor cartográfico configurado y de sus condiciones de uso.
 
 ## Comprobaciones
 
-- `npm run typecheck`: revisa los tipos de TypeScript.
-- `npm run lint`: análisis estático del código.
-- `npm run format:check`: comprueba el formato.
-- `npm run test`: ejecuta las pruebas automatizadas.
-- `npm run build`: verifica tipos y genera la compilación de producción.
-- `npm run preview`: sirve localmente la compilación de producción.
+```bash
+npm run typecheck
+npm run lint
+npm run format:check
+npm run test
+npm run build
+```
 
-## Experiencia actual
+Para servir localmente la compilación generada:
 
-- Navegación por Explorar, Planificar, Guardados e Información.
-- Formularios con mensajes explícitos cuando no hay fuentes de transporte conectadas.
-- Patrones de estado accesibles para carga, error, contenido vacío y funciones no disponibles.
-- Panel de estado de integraciones y un espacio cartográfico de diseño que no muestra calles ni ubicaciones ficticias.
-- Diseño adaptable, controles con foco visible y navegación compatible con teclado.
+```bash
+npm run preview
+```
 
-## Variables de entorno
+## Documentación
 
-`VITE_APP_NAME` permite configurar el nombre visible de la aplicación. Las variables con prefijo `VITE_` se incluyen en el código del navegador, por lo que no deben contener claves privadas, contraseñas ni tokens. Esta fase no requiere credenciales externas.
+- [Arquitectura](docs/ARCHITECTURE.md)
+- [Hoja de ruta](docs/ROADMAP.md)
+- [Auditoría de fuentes de transporte](docs/DATA_SOURCE_AUDIT.md)
 
-## Datos y transparencia
+## Privacidad y uso responsable
 
-Los datos oficiales, los datos de demostración y las predicciones deben mantenerse claramente diferenciados. No se integrarán fuentes hasta comprobar su origen, vigencia, cobertura, licencia y condiciones de uso. Nunca se mostrarán simulaciones como ubicaciones GPS, horarios o confirmaciones reales.
+La ubicación del dispositivo solo se solicita mediante una acción explícita. La aplicación no debe presentar la geolocalización como posición de un colectivo ni sugerir que hay seguimiento en tiempo real sin una fuente verificada.
 
-## Licencias y atribuciones
+## Estado
 
-Antes de integrar cartografía o datos de terceros, se documentarán las licencias, condiciones de uso y atribuciones. La elección del proveedor cartográfico está pendiente; por eso esta fase no incorpora un mapa real ni solicita permisos de ubicación.
+Proyecto en desarrollo. La presencia del código en GitHub no implica que exista una versión pública desplegada. La publicación web y la integración de datos reales son tareas pendientes.
