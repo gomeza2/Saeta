@@ -36,7 +36,9 @@ describe('App', () => {
     fireEvent.click(getByRole('button', { name: 'Buscar' }));
 
     expect(getByRole('status')).toHaveTextContent(/todavía no consulta un catálogo real/i);
-    expect(getByText(/líneas y paradas se habilitarán cuando las fuentes estén verificadas/i)).toBeInTheDocument();
+    expect(
+      getByText(/líneas y paradas se habilitarán cuando las fuentes estén verificadas/i),
+    ).toBeInTheDocument();
   });
 
   it('shows verified data availability without inventing service status', () => {
@@ -47,7 +49,6 @@ describe('App', () => {
     expect(getByText('Pendientes de verificación')).toBeInTheDocument();
     expect(getByText('No conectados')).toBeInTheDocument();
   });
-});
 
   it('provides accessible loading and error patterns for future services', () => {
     const { getByRole, rerender } = render(
