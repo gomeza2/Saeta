@@ -247,8 +247,22 @@ export function validateGtfsFiles(input: Record<string, string>): GtfsValidation
       if (!value(values, 'route_short_name') && !value(values, 'route_long_name')) {
         addIssue(issues, 'route_name_missing', 'error', 'routes.txt', 'Cada línea necesita route_short_name o route_long_name.', row);
       }
-      if (!/^[0-7]$/.test(value(values, 'route_type'))) {
-        addIssue(issues, 'route_type_invalid', 'error', 'routes.txt', 'route_type debe ser un número entre 0 y 7.', row);
+      const routeTypeText = value(values, 'route_type');
+      const routeTypeNumber = Number(routeTypeText);
+      const routeTypeIsSupported =
+        /^\\d+$/.test(routeTypeText) &&
+        Number.isSafeInteger(routeTypeNumber) &&
+        ((routeTypeNumber >= 0 && routeTypeNumber <= 7) ||
+          (routeTypeNumber >= 100 && routeTypeNumber <= 1700));
+      if (!routeTypeIsSupported) {
+        addIssue(
+          issues,
+          'route_type_invalid',
+          'error',
+          'routes.txt',
+          'route_type debe ser un tipo GTFS válido: 0–7 o un tipo extendido entre 100 y 1700.',
+          row,
+        );
       }
       if (routes.headers.includes('agency_id') && value(values, 'agency_id')) {
         checkReference(issues, 'agency_reference_invalid', 'routes.txt', row, 'La agencia', value(values, 'agency_id'), agencyIds);
