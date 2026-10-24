@@ -11,7 +11,7 @@ describe('App', () => {
       getByRole('heading', { name: /una forma más clara de moverte por salta/i }),
     ).toBeInTheDocument();
     expect(getByText(/no es una aplicación oficial ni está afiliada a SAETA/i)).toBeInTheDocument();
-    expect(getByText(/no representa ubicaciones reales/i)).toBeInTheDocument();
+    expect(getByText(/ni representa ubicaciones reales/i)).toBeInTheDocument();
   });
 
   it('navigates to the planner and clearly explains that no itinerary is generated', () => {
