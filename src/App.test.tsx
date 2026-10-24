@@ -25,7 +25,9 @@ describe('App', () => {
     fireEvent.click(getByRole('button', { name: /consultar alternativas/i }));
 
     expect(
-      getByText(/no se generó un itinerario: las fuentes de líneas y recorridos aún no están conectadas/i),
+      getByText(
+        /no se generó un itinerario: las fuentes de líneas y recorridos aún no están conectadas/i,
+      ),
     ).toBeInTheDocument();
   });
 

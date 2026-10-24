@@ -92,9 +92,14 @@ export function App() {
           <div className="welcome-copy">
             <p className="eyebrow">UNA INICIATIVA INDEPENDIENTE</p>
             <h1 id="welcome-title">Una forma más clara de moverte por Salta.</h1>
-            <p>
+            <p className="welcome-description">
               Estamos construyendo una experiencia de movilidad más sencilla. Esta versión permite
-              recorrer la interfaz, pero todavía no consulta recorridos, horarios ni posiciones reales.
+              recorrer la interfaz, pero todavía no consulta recorridos, horarios ni posiciones
+              reales.
+            </p>
+            <p className="independence-note">
+              SAETA MAPS es un proyecto independiente. No es una aplicación oficial ni está afiliada
+              a SAETA.
             </p>
           </div>
           <div className="phase-stamp" aria-label="Fase 2: diseño y experiencia">
@@ -210,7 +215,8 @@ export function App() {
                   <span aria-hidden="true">→</span>
                 </button>
                 <p className="field-hint">
-                  En esta fase los campos funcionan solo en tu navegador: no se envían a un servicio.
+                  En esta fase los campos funcionan solo en tu navegador: no se envían a un
+                  servicio.
                 </p>
                 {plannerFeedback && (
                   <StateNotice kind="unavailable" title="Planificación no disponible todavía">
@@ -230,7 +236,11 @@ export function App() {
                   Los favoritos se habilitarán cuando incorporemos paradas y lugares verificados.
                   Esta pantalla no contiene datos de ejemplo.
                 </p>
-                <button className="secondary-button" type="button" onClick={() => changeView('explore')}>
+                <button
+                  className="secondary-button"
+                  type="button"
+                  onClick={() => changeView('explore')}
+                >
                   Volver a explorar
                 </button>
               </div>

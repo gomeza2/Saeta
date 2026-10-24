@@ -41,7 +41,8 @@ export function TransportStatus() {
       </ul>
 
       <p className="data-status-note">
-        No mostramos recorridos, horarios, alertas ni ubicaciones inventadas para rellenar la pantalla.
+        No mostramos recorridos, horarios, alertas ni ubicaciones inventadas para rellenar la
+        pantalla.
       </p>
     </section>
   );
