@@ -1,21 +1,49 @@
-import { render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { App } from './App';
 
 describe('App', () => {
-  it('identifies the project as independent and avoids claiming real transport data', () => {
+  it('identifies the project as independent and does not claim live transport data', () => {
     const { getByRole, getByText } = render(<App />);
 
-    expect(getByRole('heading', { name: /moverte por la ciudad/i })).toBeInTheDocument();
-    expect(getByText(/no está afiliado ni representa una aplicación oficial/i)).toBeInTheDocument();
-    expect(getByText(/aún no hay datos oficiales conectados/i)).toBeInTheDocument();
+    expect(
+      getByRole('heading', { name: /una forma más clara de moverte por salta/i }),
+    ).toBeInTheDocument();
+    expect(getByText(/no es una aplicación oficial ni está afiliada a SAETA/i)).toBeInTheDocument();
+    expect(getByText(/no representa ubicaciones reales/i)).toBeInTheDocument();
   });
 
-  it('shows the technical foundation status', () => {
+  it('navigates to the planner and clearly explains that no itinerary is generated', () => {
+    const { getByRole, getByLabelText, getByText } = render(<App />);
+
+    fireEvent.click(getByRole('button', { name: 'Planificar' }));
+    expect(getByRole('heading', { name: 'Planificá un viaje' })).toBeInTheDocument();
+
+    fireEvent.change(getByLabelText('Origen'), { target: { value: 'Centro' } });
+    fireEvent.change(getByLabelText('Destino'), { target: { value: 'Universidad' } });
+    fireEvent.click(getByRole('button', { name: /consultar alternativas/i }));
+
+    expect(
+      getByText(/no se generó un itinerario: las fuentes de líneas y recorridos aún no están conectadas/i),
+    ).toBeInTheDocument();
+  });
+
+  it('keeps route searches transparent while transport data is unavailable', () => {
+    const { getByRole, getByLabelText, getByText } = render(<App />);
+
+    fireEvent.change(getByLabelText('Línea o parada'), { target: { value: '3A' } });
+    fireEvent.click(getByRole('button', { name: 'Buscar' }));
+
+    expect(getByRole('status')).toHaveTextContent(/todavía no consulta un catálogo real/i);
+    expect(getByText(/líneas y paradas se habilitarán cuando las fuentes estén verificadas/i)).toBeInTheDocument();
+  });
+
+  it('shows verified data availability without inventing service status', () => {
     const { getByRole, getByText } = render(<App />);
 
-    expect(getByRole('heading', { name: /la base está en preparación/i })).toBeInTheDocument();
-    expect(getByText('Preparada')).toBeInTheDocument();
-    expect(getByText('Fase posterior')).toBeInTheDocument();
+    fireEvent.click(getByRole('button', { name: 'Información' }));
+    expect(getByRole('heading', { name: 'Estado de la información' })).toBeInTheDocument();
+    expect(getByText('Pendientes de verificación')).toBeInTheDocument();
+    expect(getByText('No conectados')).toBeInTheDocument();
   });
 });
