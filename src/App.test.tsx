@@ -71,4 +71,13 @@ describe('App', () => {
     expect(getByRole('alert')).toHaveTextContent('No se pudo cargar');
     expect(getByRole('alert')).toHaveTextContent('La fuente no respondió.');
   });
+  it('opens the local GTFS inspector without claiming a live connection', () => {
+    const { getByRole, getByText } = render(<App />);
+
+    fireEvent.click(getByRole('button', { name: 'Datos' }));
+    expect(getByRole('heading', { name: 'Revisá un conjunto de transporte' })).toBeInTheDocument();
+    expect(getByRole('heading', { name: 'Revisar un conjunto GTFS' })).toBeInTheDocument();
+    expect(getByText(/no se suben ni se guardan en un servidor/i)).toBeInTheDocument();
+  });
+
 });
