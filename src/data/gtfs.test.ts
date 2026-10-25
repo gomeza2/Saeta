@@ -48,7 +48,7 @@ describe('parseCsvTable', () => {
 describe('validateGtfsFiles', () => {
   it('accepts a structurally consistent fixed-stop feed', () => {
     const report = validateGtfsFiles(validFeed);
-    expect(report.valid).toBe(true);
+    expect(report.issues).toEqual([]);
     expect(report.errors).toBe(0);
     expect(report.summary).toEqual({ agencies: 1, routes: 1, stops: 2, trips: 1, stopTimes: 2 });
   });
