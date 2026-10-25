@@ -58,3 +58,11 @@ No se añade backend en la fase 2. Se evaluará cuando sean necesarios secretos 
 Vista o componente → servicio de dominio → adaptador → fuente verificada o fixture de prueba.
 
 La interfaz recibirá modelos normalizados y un estado explícito: cargando, disponible, desactualizado, no disponible o error. La procedencia y la fecha de actualización se expondrán cuando sean relevantes para interpretar el dato.
+
+## Catálogo local y horarios publicados
+
+`gtfsPreview.ts` prepara líneas, paradas, relaciones por identificadores y geometrías no ambiguas. `gtfsSchedule.ts` procesa una consulta conservadora de viajes directos según calendarios, excepciones y horarios explícitos; no estima tiempos ni conecta servicios remotos.
+
+`gtfsAnalysis.ts` reúne lectura, parsing único, informe y preparación de datos. `gtfsImport.ts` controla el ciclo de vida del Worker de `workers/gtfs.worker.ts`; terminar una importación cancela su proceso y la UI descarta respuestas de versiones anteriores. La estructura devuelta conserva los Map de calendarios mediante clonación estructurada y permanece solo en memoria.
+
+`App` comparte el catálogo importado entre Datos, Explorar y Planificar. El inspector conserva su estado al cambiar de pestaña, y limpiar o reemplazar elimina también el catálogo compartido. `GtfsExplorer` y `GtfsPlanner` consumen esa estructura sin volver a leer archivos. `MapPreview` dibuja solo capas explícitas, con agrupación visual de paradas y límites de representación; `mapGroups.ts` no interpreta grupos como vehículos ni rutas.

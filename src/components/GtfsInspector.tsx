@@ -1,7 +1,8 @@
-import { useRef, useState, type ChangeEvent } from 'react';
-import { validateGtfsFiles, type GtfsValidationReport } from '../data/gtfs';
+import { useEffect, useRef, useState, type ChangeEvent } from 'react';
+import type { GtfsValidationReport } from '../data/gtfs';
+import { startGtfsImport } from '../data/gtfsImport';
 
-import { buildGtfsPreview, parseGtfsTables, type GtfsPreviewData } from '../data/gtfsPreview';
+import { type GtfsPreviewData } from '../data/gtfsPreview';
 import { GtfsPreview } from './GtfsPreview';
 
 const MAX_TOTAL_BYTES = 60 * 1024 * 1024;
@@ -12,6 +13,14 @@ export function GtfsInspector({
   onPreviewChange?: (data: GtfsPreviewData | null) => void;
 }) {
   const requestId = useRef(0);
+  const cancelImport = useRef<(() => void) | null>(null);
+  useEffect(
+    () => () => {
+      requestId.current += 1;
+      cancelImport.current?.();
+    },
+    [],
+  );
   const [previewVersion, setPreviewVersion] = useState(0);
   const [preview, setPreview] = useState<GtfsPreviewData | null>(null);
   const [report, setReport] = useState<GtfsValidationReport | null>(null);
@@ -20,6 +29,7 @@ export function GtfsInspector({
 
   async function handleFilesChange(event: ChangeEvent<HTMLInputElement>) {
     const currentRequest = ++requestId.current;
+    cancelImport.current?.();
     setPreviewVersion((version) => version + 1);
     const selectedFiles = Array.from(event.currentTarget.files ?? []);
     event.currentTarget.value = '';
@@ -51,21 +61,17 @@ export function GtfsInspector({
 
     setIsValidating(true);
     try {
-      const contents = await Promise.all(selectedFiles.map((file) => file.text()));
+      const task = startGtfsImport(selectedFiles);
+      cancelImport.current = task.cancel;
+      const { report: nextReport, data } = await task.promise;
       if (currentRequest !== requestId.current) return;
-      const files: Record<string, string> = {};
-      selectedFiles.forEach((file, index) => {
-        files[file.name] = contents[index] ?? '';
-      });
-      const tables = parseGtfsTables(files);
-      setReport(validateGtfsFiles(files, tables));
-      const data = buildGtfsPreview(files, tables);
+      setReport(nextReport);
       setPreview(data);
       onPreviewChange?.(data);
     } catch {
       if (currentRequest !== requestId.current) return;
       setInputError(
-        'No se pudieron leer los archivos seleccionados. Revisá que se puedan abrir e intentá otra vez.',
+        'No se pudieron leer o procesar los archivos seleccionados. Revisá que se puedan abrir e intentá otra vez.',
       );
     } finally {
       if (currentRequest === requestId.current) setIsValidating(false);
@@ -110,7 +116,8 @@ export function GtfsInspector({
       </label>
       <p className="field-hint" id="gtfs-file-help">
         Revisa CSV, columnas, referencias, coordenadas, calendarios y secuencias básicas de paradas.
-        Límite: 60 MB por selección. No se comprueban todos los archivos opcionales del estándar.
+        Límite: 60 MB por selección y 100 000 filas por archivo. No se comprueban todos los archivos
+        opcionales del estándar.
       </p>
 
       <button
@@ -118,6 +125,7 @@ export function GtfsInspector({
         type="button"
         onClick={() => {
           requestId.current += 1;
+          cancelImport.current?.();
           setPreview(null);
           onPreviewChange?.(null);
           setReport(null);

@@ -93,7 +93,9 @@ describe('GTFS import and preview', () => {
         files: [{ name: 'stops.txt', size: 1, text: () => Promise.reject(new Error('read')) }],
       },
     });
-    await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent(/No se pudieron leer/));
+    await waitFor(() =>
+      expect(screen.getByRole('alert')).toHaveTextContent(/No se pudieron leer o procesar/),
+    );
   });
   it('ignores old reads after replacing or clearing the import', async () => {
     render(<GtfsInspector />);

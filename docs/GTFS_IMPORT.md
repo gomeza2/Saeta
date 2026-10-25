@@ -63,3 +63,11 @@ Se comparte la estructura ya procesada en memoria: cambiar de pestaña o buscar 
 Se excluyen viajes con IDs ambiguos, referencias rotas, secuencias repetidas, horas ausentes o regresivas y plantillas de `frequencies.txt`. Los puntos de ascenso/descenso que requieren llamada, coordinación o están prohibidos no se ofrecen como extremos normales. No se interpola ni se calculan esperas, caminatas o transbordos. Si no hay datos suficientes o coincidencias, se explica sin inventar alternativas.
 
 Los resultados son horarios publicados en los archivos, no predicciones ni confirmaciones de que el servicio exista o esté vigente. Se muestran hasta 20 viajes, ordenados por salida, junto al conteo total. Cambiar los campos descarta el resultado anterior y reemplazar o limpiar la importación elimina los horarios procesados. Los tests usan únicamente conjuntos sintéticos.
+
+## Límites y procesamiento en segundo plano (Fase 10)
+
+En navegadores compatibles, la lectura, el CSV, la inspección y la preparación del catálogo/horarios se ejecutan en un Web Worker local. Limpiar, reemplazar o desmontar el inspector termina el proceso anterior; no puede restaurar resultados viejos. No se transmite el contenido a ningún servidor. En navegadores sin Workers se mantiene un procesamiento local compatible, que puede bloquear la interfaz durante el análisis.
+
+Se permiten hasta 60 MB por selección, 100 000 filas por archivo, 256 columnas por registro y 1 000 000 de caracteres por campo. Superar un límite rechaza la tabla completa: no se presenta un feed truncado como si fuese completo. Sus filas no se incluyen en los conteos inspeccionados y el informe explica la causa. Los filtros y la vista geográfica mantienen sus propios límites de resultados.
+
+Solo se retienen las primeras 50 incidencias y errores de CSV para representación, conservando sus conteos totales. Las tablas se parsean una vez por importación y las relaciones usan conjuntos de identificadores para evitar búsquedas repetidas. Estos límites no sustituyen la medición en dispositivos reales ni convierten al inspector en un validador completo.
