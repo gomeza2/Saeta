@@ -86,6 +86,9 @@ export function App() {
 
   return (
     <div className="app-frame" id="inicio">
+      <a className="skip-link" href="#main-content">
+        Saltar al contenido
+      </a>
       <header className="topbar">
         <a className="brand" href="#inicio" aria-label={appConfig.name + ', inicio'}>
           <span className="brand-mark" aria-hidden="true">
@@ -106,7 +109,7 @@ export function App() {
         </div>
       </header>
 
-      <main className="main-content">
+      <main className="main-content" id="main-content" tabIndex={-1}>
         <section className="welcome-row" aria-labelledby="welcome-title">
           <div className="welcome-copy">
             <p className="eyebrow">UNA INICIATIVA INDEPENDIENTE</p>
@@ -121,11 +124,11 @@ export function App() {
               a SAETA.
             </p>
           </div>
-          <div className="phase-stamp" aria-label="Fase 9: mapa y capas locales">
-            <span className="phase-stamp-number">09</span>
+          <div className="phase-stamp" aria-label="Fase 10: experiencia móvil">
+            <span className="phase-stamp-number">10</span>
             <span className="phase-stamp-copy">
               <strong>Fase actual</strong>
-              <span>Mapa y capas locales</span>
+              <span>Experiencia móvil</span>
             </span>
           </div>
         </section>
@@ -305,8 +308,8 @@ export function App() {
                   </li>
                 </ul>
                 <p className="field-hint">
-                  No pedimos acceso a tu ubicación y no enviamos consultas a proveedores externos en
-                  esta fase.
+                  La ubicación solo se solicita al usar su botón. Los archivos se procesan en tu
+                  navegador; el mapa solicita las teselas visibles al proveedor cartográfico.
                 </p>
               </div>
             )}

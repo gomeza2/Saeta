@@ -141,3 +141,45 @@ describe('GTFS conditional requirements', () => {
     );
   });
 });
+
+describe('CSV resource limits', () => {
+  it('rejects a table exceeding the row budget instead of previewing a truncated feed', () => {
+    const table = parseCsvTable('stop_id,stop_name\n' + 'synthetic,Test\n'.repeat(100_001));
+    expect(table.rows).toEqual([]);
+    expect(table.errors[0]?.message).toMatch(/100 000 filas/);
+  });
+  it('caps retained parser errors while preserving their total in the report', () => {
+    const source = 'stop_id,stop_name\n' + 'synthetic\n'.repeat(80);
+    const table = parseCsvTable(source);
+    expect(table.errors).toHaveLength(50);
+    expect(table.errorCount).toBe(80);
+    const report = validateGtfsFiles({ ...validFeed, 'stops.txt': source });
+    expect(report.errors).toBeGreaterThanOrEqual(80);
+    expect(report.issues).toHaveLength(50);
+    expect(report.omittedIssues).toBe(report.errors + report.warnings - 50);
+  });
+});
+
+it('preserves explicit empty CSV fields and reports invalid decimal coordinates and duplicate exceptions', () => {
+  const table = parseCsvTable('a,b\n,\n"",""\n');
+  expect(table.rows).toHaveLength(2);
+  expect(table.rows[0]?.values).toEqual({ a: '', b: '' });
+  const report = validateGtfsFiles({
+    ...validFeed,
+    'stops.txt': 'stop_id,stop_name,stop_lat,stop_lon\nstop-1,Test,0x10,0',
+    'calendar_dates.txt': 'service_id,date,exception_type\nweekday,20261025,1\nweekday,20261025,2',
+  });
+  expect(report.issues.map((i) => i.code)).toEqual(
+    expect.arrayContaining(['latitude_invalid', 'service_exception_duplicate']),
+  );
+});
+
+it('rejects excessively wide tables and oversized fields before retaining unbounded records', () => {
+  expect(
+    parseCsvTable(Array.from({ length: 257 }, (_, i) => `column_${i}`).join(',')).errors[0]
+      ?.message,
+  ).toMatch(/256 columnas/);
+  expect(parseCsvTable('header\n' + 'x'.repeat(1_000_002)).errors[0]?.message).toMatch(
+    /1 000 000 de caracteres/,
+  );
+});

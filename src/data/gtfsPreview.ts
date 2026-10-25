@@ -111,6 +111,8 @@ export function buildGtfsPreview(
       times.set(v.trip_id ?? '', rows);
     }
   }
+  const routeStops = new Map(routes.map((r) => [r.id, new Set<string>()]));
+  const routeShapes = new Map(routes.map((r) => [r.id, new Set<string>()]));
   for (const { values: v } of trips) {
     const route = routeById.get(v.route_id ?? '');
     if (!route) continue;
@@ -121,10 +123,13 @@ export function buildGtfsPreview(
       new Set(rows.map((r) => r.sequence)).size === rows.length
     ) {
       rows.sort((a, b) => a.sequence - b.sequence);
-      for (const row of rows) if (!route.stopIds.includes(row.stop)) route.stopIds.push(row.stop);
+      for (const row of rows) routeStops.get(route.id)!.add(row.stop);
     }
-    if (shapeIds.has(v.shape_id ?? '') && !route.shapeIds.includes(v.shape_id!))
-      route.shapeIds.push(v.shape_id!);
+    if (shapeIds.has(v.shape_id ?? '')) routeShapes.get(route.id)!.add(v.shape_id!);
+  }
+  for (const route of routes) {
+    route.stopIds = [...routeStops.get(route.id)!];
+    route.shapeIds = [...routeShapes.get(route.id)!];
   }
   const referencedShapes = new Set(routes.flatMap((route) => route.shapeIds));
   return {
