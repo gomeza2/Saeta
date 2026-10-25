@@ -13,9 +13,9 @@ Para `803c5a1f0af494388a2dd4a3662005cf134abfef`, el resumen público de [calidad
 
 El bloqueo CONNECT inicial dejó de reproducirse. Se comprobó que la URL pública entrega HTML con bundles compilados y que ambos assets JS/CSS responden HTTP 200 con sus tipos de contenido correctos.
 
-La API de Pages confirmó `build_type: legacy`, con fuente `main` y `/`. Se intentó cambiar a `workflow` con la API oficial y GitHub respondió HTTP 403: `Resource not accessible by integration`. La identidad de la integración permite ramas y pull requests, pero no ese ajuste de Pages. Queda pendiente que un administrador seleccione **GitHub Actions** en el recorrido de Settings indicado arriba. No se ha confirmado ese cambio.
+La API de Pages confirmó `build_type: legacy`, con fuente `main` y `/`. Se intentó cambiar a `workflow` con la API oficial y GitHub respondió HTTP 403: `Resource not accessible by integration`. La identidad de la integración permite ramas y pull requests, pero no ese ajuste de Pages. En una lectura posterior, la API confirmó `build_type: workflow`. El ajuste de Source ya está aplicado; no se atribuye al intento que recibió 403. No queda pendiente seleccionar GitHub Actions según esa última lectura.
 
-Una solicitud de tesela respondió con una imagen de denegación y cabecera `x-blocked: Access denied` del proveedor. Esa respuesta no verifica cartografía útil aunque su HTTP sea 200. Las pruebas locales de capas excluyen las teselas externas.
+La primera solicitud genérica de tesela respondió con una imagen de denegación y cabecera `x-blocked: Access denied`. Una comprobación posterior identificada como `SAETA-MAPS-development-check/0.1`, con Referer de la aplicación y una tesela de Salta, recibió HTTP 200 sin esa cabecera y una imagen de calles reales, inspeccionada visualmente. Esto comprueba esa solicitud concreta, no garantiza disponibilidad permanente. Las pruebas de navegador local excluyen las teselas externas.
 
 ## Comprobación después de publicar
 
@@ -25,3 +25,7 @@ Una solicitud de tesela respondió con una imagen de denegación y cabecera `x-b
 4. Comprobar Leaflet, atribución y teselas del proveedor; no confundir disponibilidad de teselas con una fuente de transporte conectada.
 
 No cambiar Source a ciegas si la publicación de Actions ya funciona. Si continúa en `Deploy from a branch`, seleccionar **GitHub Actions**, guardar y ejecutar el workflow. No se necesita publicar `dist` en `main`.
+
+## Mejoras integradas
+
+Las fases 6–10 se fusionaron en [PR #6](https://github.com/gomeza2/Saeta/pull/6), [PR #7](https://github.com/gomeza2/Saeta/pull/7), [PR #8](https://github.com/gomeza2/Saeta/pull/8), [PR #9](https://github.com/gomeza2/Saeta/pull/9) y [PR #10](https://github.com/gomeza2/Saeta/pull/10). La revisión `c1e0d14` integra la Fase 10; su [control de calidad](https://github.com/gomeza2/Saeta/actions/runs/40206183466) quedó aprobado. La publicación y el contenido público deben comprobarse contra el SHA actual, sin inferirlos solo de la existencia del workflow.
