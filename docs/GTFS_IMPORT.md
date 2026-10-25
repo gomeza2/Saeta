@@ -71,3 +71,9 @@ En navegadores compatibles, la lectura, el CSV, la inspección y la preparación
 Se permiten hasta 60 MB por selección, 100 000 filas por archivo, 256 columnas por registro y 1 000 000 de caracteres por campo. Superar un límite rechaza la tabla completa: no se presenta un feed truncado como si fuese completo. Sus filas no se incluyen en los conteos inspeccionados y el informe explica la causa. Los filtros y la vista geográfica mantienen sus propios límites de resultados.
 
 Solo se retienen las primeras 50 incidencias y errores de CSV para representación, conservando sus conteos totales. Las tablas se parsean una vez por importación y las relaciones usan conjuntos de identificadores para evitar búsquedas repetidas. Estos límites no sustituyen la medición en dispositivos reales ni convierten al inspector en un validador completo.
+
+## Orden de registros y ubicación de incidencias
+
+El orden de las paradas de un viaje se obtiene de `stop_sequence`, no de la posición de las filas en `stop_times.txt`. El inspector permite filas desordenadas y viajes intercalados; sigue rechazando secuencias no enteras, negativas o repetidas dentro de un mismo viaje. La vista previa y el planificador ordenan por esos valores y no inventan el recorrido a partir del orden del archivo.
+
+Cuando una incidencia indica una fila, se refiere a la línea física donde empieza el registro CSV. Las líneas vacías y los saltos dentro de campos entrecomillados se cuentan, incluidos LF, CRLF y CR. Por ejemplo, un registro que empieza en la línea 4 y ocupa dos líneas se identifica como fila 4. Los límites que afectan al archivo completo pueden informarse sin fila.
