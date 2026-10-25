@@ -1,1 +1,1 @@
-export type AppView = 'explore' | 'planner' | 'saved' | 'info';
+export type AppView = 'explore' | 'planner' | 'saved' | 'data' | 'info';
