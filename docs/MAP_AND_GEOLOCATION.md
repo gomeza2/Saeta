@@ -23,3 +23,11 @@ El valor por defecto usa el servidor comunitario de teselas de OpenStreetMap com
 - Errores de geolocalización comunicados de forma accesible.
 - Ningún dato de transporte simulado.
 - Typecheck, lint, formato, pruebas y build de producción aprobados por CI.
+
+## Capas importadas y controles (Fase 9)
+
+La vista opcional del conjunto local ofrece controles independientes para paradas y geometrías verificadas. Los marcadores admiten foco y activación con Enter o Espacio, con un panel de detalle y textos de popup tratados como texto, no HTML. Los controles de zoom se presentan en español y la rueda no captura el desplazamiento de la página.
+
+Con más de 200 paradas se agrupan visualmente en celdas de 48 píxeles según el zoom; el ancla de cada grupo es una parada real del archivo, no una posición de vehículo. Activar un grupo acerca la vista. Los filtros permiten separar paradas coincidentes. Se conservan los límites de 2000 paradas y 100 000 puntos completos de geometría por vista.
+
+Los fallos de carga de teselas muestran un mensaje y permiten reintentar sin borrar los datos locales. Un proveedor que devuelva una imagen de denegación con HTTP 200 puede no generar un evento de error en Leaflet: recibir una imagen no acredita cartografía útil. La atribución sigue visible y la ubicación personal continúa solicitándose solo mediante el botón explícito.

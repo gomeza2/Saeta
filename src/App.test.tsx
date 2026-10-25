@@ -37,7 +37,9 @@ describe('App', () => {
     fireEvent.change(getByLabelText('Línea o parada'), { target: { value: '3A' } });
     fireEvent.click(getByRole('button', { name: 'Buscar' }));
 
-    expect(getByRole('status')).toHaveTextContent(/todavía no consulta un catálogo real/i);
+    expect(getByRole('status', { name: 'Búsqueda no disponible todavía' })).toHaveTextContent(
+      /todavía no consulta un catálogo real/i,
+    );
     expect(
       getByText(/líneas y paradas se habilitarán cuando las fuentes estén verificadas/i),
     ).toBeInTheDocument();

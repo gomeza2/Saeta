@@ -1,4 +1,4 @@
-import { fireEvent, render, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MapPreview } from './MapPreview';
 import * as L from 'leaflet';
@@ -8,6 +8,11 @@ const leafletMocks = vi.hoisted(() => {
     addTo: vi.fn().mockReturnThis(),
     bindPopup: vi.fn().mockReturnThis(),
     clearLayers: vi.fn(),
+    on: vi.fn().mockReturnThis(),
+    off: vi.fn(),
+    redraw: vi.fn(),
+    openPopup: vi.fn(),
+    getElement: vi.fn(() => document.createElement('span')),
   };
   const map = {
     setView: vi.fn().mockReturnThis(),
@@ -15,12 +20,16 @@ const leafletMocks = vi.hoisted(() => {
     remove: vi.fn(),
     removeLayer: vi.fn(),
     fitBounds: vi.fn(),
+    getZoom: vi.fn(() => 13),
+    on: vi.fn(),
+    off: vi.fn(),
   };
   return { layer, map };
 });
 
 vi.mock('leaflet', () => ({
   map: vi.fn(() => leafletMocks.map),
+  control: { zoom: vi.fn(() => leafletMocks.layer) },
   latLngBounds: vi.fn(() => ({ extend: vi.fn(), isValid: () => true })),
   tileLayer: vi.fn(() => leafletMocks.layer),
   layerGroup: vi.fn(() => leafletMocks.layer),
@@ -112,4 +121,37 @@ it('renders only supplied coordinates and verified shapes, escaping popup text a
   rerender(<MapPreview importedStops={[]} importedShapes={[]} />);
   expect(leafletMocks.layer.clearLayers).toHaveBeenCalled();
   expect(leafletMocks.map.removeLayer).toHaveBeenCalled();
+});
+
+describe('imported map controls', () => {
+  beforeEach(() => vi.clearAllMocks());
+  it('supports stop detail selection by keyboard and layer toggles', () => {
+    const { getByRole, getByLabelText } = render(
+      <MapPreview
+        importedStops={[{ id: 'keyboard-stop', name: 'Synthetic stop', coordinates: [-24, -65] }]}
+      />,
+    );
+    const element = leafletMocks.layer.getElement.mock.results.at(-1)!.value as HTMLElement;
+    expect(element).toHaveAttribute('tabindex', '0');
+    expect(element).toHaveAttribute('role', 'button');
+    fireEvent.keyDown(element, { key: 'Enter' });
+    expect(getByRole('complementary', { name: 'Parada seleccionada' })).toHaveTextContent(
+      'keyboard-stop',
+    );
+    fireEvent.click(getByRole('button', { name: 'Cerrar parada' }));
+    const initialCount = vi.mocked(L.circleMarker).mock.calls.length;
+    fireEvent.click(getByLabelText('Paradas'));
+    expect(vi.mocked(L.circleMarker).mock.calls.length).toBe(initialCount);
+    expect(getByLabelText('Paradas')).not.toBeChecked();
+  });
+  it('explains tile failures and retries without removing local data', () => {
+    const { getByRole } = render(<MapPreview />);
+    const onError = leafletMocks.layer.on.mock.calls.find(
+      (call) => call[0] === 'tileerror',
+    )?.[1] as () => void;
+    act(() => onError());
+    expect(getByRole('status')).toHaveTextContent(/No se pudieron cargar todas las teselas/);
+    fireEvent.click(getByRole('button', { name: 'Reintentar cartografía' }));
+    expect(leafletMocks.layer.redraw).toHaveBeenCalledOnce();
+  });
 });

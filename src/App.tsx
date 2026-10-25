@@ -121,11 +121,11 @@ export function App() {
               a SAETA.
             </p>
           </div>
-          <div className="phase-stamp" aria-label="Fase 8: horarios locales">
-            <span className="phase-stamp-number">08</span>
+          <div className="phase-stamp" aria-label="Fase 9: mapa y capas locales">
+            <span className="phase-stamp-number">09</span>
             <span className="phase-stamp-copy">
               <strong>Fase actual</strong>
-              <span>Horarios locales</span>
+              <span>Mapa y capas locales</span>
             </span>
           </div>
         </section>
