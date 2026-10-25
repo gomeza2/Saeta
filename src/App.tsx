@@ -101,8 +101,8 @@ export function App() {
             <h1 id="welcome-title">Una forma más clara de moverte por Salta.</h1>
             <p className="welcome-description">
               Estamos construyendo una experiencia de movilidad más sencilla. Esta versión permite
-              usar el mapa base y revisar archivos de transporte localmente. Todavía no consulta recorridos,
-              horarios ni posiciones reales de SAETA.
+              usar el mapa base y revisar archivos de transporte localmente. Todavía no consulta
+              recorridos, horarios ni posiciones reales de SAETA.
             </p>
             <p className="independence-note">
               SAETA MAPS es un proyecto independiente. No es una aplicación oficial ni está afiliada

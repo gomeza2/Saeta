@@ -16,7 +16,9 @@ export function GtfsInspector() {
     if (selectedFiles.length === 0) return;
 
     if (selectedFiles.some((file) => !file.name.toLowerCase().endsWith('.txt'))) {
-      setInputError('Elegí archivos .txt extraídos de un conjunto GTFS. Descomprimí el ZIP antes de seleccionarlos.');
+      setInputError(
+        'Elegí archivos .txt extraídos de un conjunto GTFS. Descomprimí el ZIP antes de seleccionarlos.',
+      );
       return;
     }
     const names = selectedFiles.map((file) => file.name.toLowerCase());
@@ -26,7 +28,9 @@ export function GtfsInspector() {
     }
     const totalBytes = selectedFiles.reduce((total, file) => total + file.size, 0);
     if (totalBytes > MAX_TOTAL_BYTES) {
-      setInputError('La selección supera los 60 MB. Este límite reduce el uso excesivo de memoria en el navegador.');
+      setInputError(
+        'La selección supera los 60 MB. Este límite reduce el uso excesivo de memoria en el navegador.',
+      );
       return;
     }
 
@@ -39,7 +43,9 @@ export function GtfsInspector() {
       });
       setReport(validateGtfsFiles(files));
     } catch {
-      setInputError('No se pudieron leer los archivos seleccionados. Revisá que se puedan abrir e intentá otra vez.');
+      setInputError(
+        'No se pudieron leer los archivos seleccionados. Revisá que se puedan abrir e intentá otra vez.',
+      );
     } finally {
       setIsValidating(false);
     }
@@ -52,24 +58,25 @@ export function GtfsInspector() {
         <h3 id="gtfs-inspector-title">Revisar un conjunto GTFS</h3>
         <p>
           Seleccioná archivos de texto de un conjunto de transporte para revisar su estructura antes
-          de considerar cualquier futura integración. No hace falta conectar una fuente para usar esta
-          herramienta.
+          de considerar cualquier futura integración. No hace falta conectar una fuente para usar
+          esta herramienta.
         </p>
       </div>
 
       <div className="gtfs-privacy-note">
         <span aria-hidden="true">i</span>
         <p>
-          Los archivos se leen en esta pestaña: no se suben ni se guardan en un servidor, no se dibujan
-          en el mapa. Este informe tampoco verifica el origen, la vigencia, la licencia ni los permisos.
+          Los archivos se leen en esta pestaña: no se suben ni se guardan en un servidor, no se
+          dibujan en el mapa. Este informe tampoco verifica el origen, la vigencia, la licencia ni
+          los permisos.
         </p>
       </div>
 
       <label className="gtfs-file-picker" htmlFor="gtfs-files">
         <span className="gtfs-file-picker-title">Elegir archivos GTFS (.txt)</span>
         <span className="gtfs-file-picker-hint">
-          Descomprimí el conjunto y elegí agency.txt, routes.txt, stops.txt, trips.txt, stop_times.txt
-          y calendar.txt o calendar_dates.txt.
+          Descomprimí el conjunto y elegí agency.txt, routes.txt, stops.txt, trips.txt,
+          stop_times.txt y calendar.txt o calendar_dates.txt.
         </span>
         <input
           id="gtfs-files"
@@ -98,58 +105,90 @@ export function GtfsInspector() {
 
       {report && (
         <section
-          className={report.valid ? 'gtfs-report gtfs-report-valid' : 'gtfs-report gtfs-report-invalid'}
+          className={
+            report.valid ? 'gtfs-report gtfs-report-valid' : 'gtfs-report gtfs-report-invalid'
+          }
           aria-labelledby="gtfs-report-title"
           aria-live="polite"
         >
           <div className="gtfs-report-heading">
             <div>
               <h4 id="gtfs-report-title">
-                {report.valid ? 'La estructura básica parece coherente' : 'Se encontraron problemas'}
+                {report.valid
+                  ? 'La estructura básica parece coherente'
+                  : 'Se encontraron problemas'}
               </h4>
               <p>
                 {report.errors} errores · {report.warnings} advertencias
               </p>
             </div>
-            <span className={report.valid ? 'gtfs-result-pill gtfs-result-ok' : 'gtfs-result-pill gtfs-result-error'}>
+            <span
+              className={
+                report.valid
+                  ? 'gtfs-result-pill gtfs-result-ok'
+                  : 'gtfs-result-pill gtfs-result-error'
+              }
+            >
               {report.valid ? 'Sin errores detectados' : 'Revisar archivos'}
             </span>
           </div>
 
           <dl className="gtfs-summary">
-            <div><dt>Agencias</dt><dd>{report.summary.agencies}</dd></div>
-            <div><dt>Líneas</dt><dd>{report.summary.routes}</dd></div>
-            <div><dt>Paradas</dt><dd>{report.summary.stops}</dd></div>
-            <div><dt>Viajes</dt><dd>{report.summary.trips}</dd></div>
-            <div><dt>Horarios de parada</dt><dd>{report.summary.stopTimes}</dd></div>
+            <div>
+              <dt>Agencias</dt>
+              <dd>{report.summary.agencies}</dd>
+            </div>
+            <div>
+              <dt>Líneas</dt>
+              <dd>{report.summary.routes}</dd>
+            </div>
+            <div>
+              <dt>Paradas</dt>
+              <dd>{report.summary.stops}</dd>
+            </div>
+            <div>
+              <dt>Viajes</dt>
+              <dd>{report.summary.trips}</dd>
+            </div>
+            <div>
+              <dt>Horarios de parada</dt>
+              <dd>{report.summary.stopTimes}</dd>
+            </div>
           </dl>
 
           {report.issues.length > 0 ? (
             <ul className="gtfs-issues" aria-label="Resultados de la revisión">
               {report.issues.map((issue, index) => (
                 <li
-                  className={issue.severity === 'error' ? 'gtfs-issue gtfs-issue-error' : 'gtfs-issue'}
+                  className={
+                    issue.severity === 'error' ? 'gtfs-issue gtfs-issue-error' : 'gtfs-issue'
+                  }
                   key={issue.code + '-' + index}
                 >
                   <strong>{issue.severity === 'error' ? 'Error' : 'Advertencia'}</strong>
                   <span>
-                    {issue.file}{issue.row ? `, fila ${issue.row}` : ''}: {issue.message}
+                    {issue.file}
+                    {issue.row ? `, fila ${issue.row}` : ''}: {issue.message}
                   </span>
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="gtfs-clean-note">No se encontraron problemas en las comprobaciones incluidas en esta versión.</p>
+            <p className="gtfs-clean-note">
+              No se encontraron problemas en las comprobaciones incluidas en esta versión.
+            </p>
           )}
 
           {report.omittedIssues > 0 && (
             <p className="field-hint">
-              Se omitieron {report.omittedIssues} incidencias adicionales para mantener legible el informe.
+              Se omitieron {report.omittedIssues} incidencias adicionales para mantener legible el
+              informe.
             </p>
           )}
           <p className="gtfs-report-limit">
-            Un informe sin errores no acredita vigencia, exactitud, licencia ni autorización. Los datos
-            inspeccionados no se integran en SAETA MAPS. Este no es un validador oficial completo de GTFS.
+            Un informe sin errores no acredita vigencia, exactitud, licencia ni autorización. Los
+            datos inspeccionados no se integran en SAETA MAPS. Este no es un validador oficial
+            completo de GTFS.
           </p>
         </section>
       )}

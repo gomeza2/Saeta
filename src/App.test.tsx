@@ -79,5 +79,4 @@ describe('App', () => {
     expect(getByRole('heading', { name: 'Revisar un conjunto GTFS' })).toBeInTheDocument();
     expect(getByText(/no se suben ni se guardan en un servidor/i)).toBeInTheDocument();
   });
-
 });
