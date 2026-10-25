@@ -19,6 +19,7 @@ export function StateNotice({ kind, title, children }: StateNoticeProps) {
     <div
       className={`state-notice state-notice-${kind}`}
       role={kind === 'error' ? 'alert' : 'status'}
+      aria-label={title}
       aria-live={kind === 'error' ? 'assertive' : 'polite'}
     >
       <span className="state-notice-symbol" aria-hidden="true">

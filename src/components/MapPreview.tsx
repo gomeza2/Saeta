@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import './MapPreview.css';
 import type { ImportedStop, ImportedShape } from '../data/gtfsPreview';
+import { groupMapStops } from '../data/mapGroups';
 import { appConfig } from '../config/env';
 import { StateNotice } from './StateNotice';
 
@@ -30,6 +31,14 @@ export function MapPreview({
   importedStops?: ImportedStop[];
   importedShapes?: ImportedShape[];
 }) {
+  const titleId = useId();
+  const hasImport = importedStops !== emptyStops || importedShapes !== emptyShapes;
+  const [showStops, setShowStops] = useState(true);
+  const [showShapes, setShowShapes] = useState(true);
+  const [selectedId, setSelectedId] = useState('');
+  const selectedStop = importedStops.find((s) => s.id === selectedId);
+  const [tileStatus, setTileStatus] = useState<'idle' | 'loading' | 'ready' | 'error'>('idle');
+  const tileLayerRef = useRef<L.TileLayer | null>(null);
   const mapElementRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<L.Map | null>(null);
   const locationLayerRef = useRef<L.LayerGroup | null>(null);
@@ -40,17 +49,30 @@ export function MapPreview({
     const element = mapElementRef.current;
     if (!element) return undefined;
 
-    const map = L.map(element, { zoomControl: true, scrollWheelZoom: true }).setView(
+    const map = L.map(element, { zoomControl: false, scrollWheelZoom: false }).setView(
       saltaCenter,
       13,
     );
+    L.control.zoom({ zoomInTitle: 'Acercar', zoomOutTitle: 'Alejar' }).addTo(map);
     const locationLayer = L.layerGroup().addTo(map);
 
-    L.tileLayer(appConfig.mapTileUrl, {
+    const tiles = L.tileLayer(appConfig.mapTileUrl, {
       maxZoom: 19,
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors</a>',
-    }).addTo(map);
+    });
+    let tileFailed = false;
+    tiles.on('loading', () => {
+      tileFailed = false;
+      setTileStatus('loading');
+    });
+    tiles.on('tileerror', () => {
+      tileFailed = true;
+      setTileStatus('error');
+    });
+    tiles.on('load', () => setTileStatus(tileFailed ? 'error' : 'ready'));
+    tiles.addTo(map);
+    tileLayerRef.current = tiles;
 
     mapRef.current = map;
     locationLayerRef.current = locationLayer;
@@ -61,6 +83,8 @@ export function MapPreview({
 
     return () => {
       resizeObserver?.disconnect();
+      tiles.off();
+      tileLayerRef.current = null;
       map.remove();
       mapRef.current = null;
       locationLayerRef.current = null;
@@ -71,29 +95,66 @@ export function MapPreview({
     const map = mapRef.current;
     if (!map) return;
     const layer = L.layerGroup().addTo(map);
+    const stopLayer = L.layerGroup().addTo(layer);
     const bounds = L.latLngBounds([]);
-    for (const stop of importedStops.slice(0, 2000)) {
-      if (!stop.coordinates) continue;
-      const label = document.createElement('span');
-      label.textContent = `${stop.name || 'Sin nombre'} · ${stop.id} · Importación local`;
-      L.circleMarker(stop.coordinates, { radius: 5, color: '#27543d', fillOpacity: 0.8 })
-        .bindPopup(label)
-        .addTo(layer);
-      bounds.extend(stop.coordinates);
-    }
+    const stops = showStops ? importedStops.filter((s) => s.coordinates).slice(0, 2000) : [];
+    for (const stop of stops) bounds.extend(stop.coordinates!);
     let remainingPoints = 100_000;
-    for (const shape of importedShapes) {
-      if (shape.points.length > remainingPoints) continue;
-      remainingPoints -= shape.points.length;
-      L.polyline(shape.points, { color: '#275f91', weight: 3 }).addTo(layer);
-      for (const point of shape.points) bounds.extend(point);
-    }
+    if (showShapes)
+      for (const shape of importedShapes) {
+        if (shape.points.length > remainingPoints) continue;
+        remainingPoints -= shape.points.length;
+        L.polyline(shape.points, { color: '#275f91', weight: 3 }).addTo(layer);
+        for (const point of shape.points) bounds.extend(point);
+      }
     if (bounds.isValid()) map.fitBounds(bounds, { padding: [24, 24], maxZoom: 16, animate: false });
+    function drawStops() {
+      stopLayer.clearLayers();
+      for (const members of groupMapStops(stops, map!.getZoom())) {
+        const stop = members[0]!;
+        const grouped = members.length > 1;
+        const label = document.createElement('span');
+        label.textContent = grouped
+          ? `${members.length} paradas importadas agrupadas. Acercá o usá los filtros para separarlas.`
+          : `${stop.name || 'Sin nombre'} · ${stop.id} · Importación local`;
+        const marker = L.circleMarker(stop.coordinates!, {
+          radius: grouped ? 12 : 6,
+          color: '#27543d',
+          fillOpacity: 0.8,
+        })
+          .bindPopup(label)
+          .addTo(stopLayer);
+        function select() {
+          if (grouped)
+            map!.setView(stop.coordinates!, Math.min(map!.getZoom() + 2, 19), { animate: false });
+          else {
+            setSelectedId(stop.id);
+            marker.openPopup();
+          }
+        }
+        marker.on('click', select);
+        const element = marker.getElement();
+        if (element) {
+          element.setAttribute('tabindex', '0');
+          element.setAttribute('role', 'button');
+          element.setAttribute('aria-label', label.textContent);
+          element.addEventListener('keydown', (event) => {
+            if (event instanceof KeyboardEvent && (event.key === 'Enter' || event.key === ' ')) {
+              event.preventDefault();
+              select();
+            }
+          });
+        }
+      }
+    }
+    drawStops();
+    map.on('zoomend', drawStops);
     return () => {
+      map.off('zoomend', drawStops);
       layer.clearLayers();
       map.removeLayer(layer);
     };
-  }, [importedStops, importedShapes]);
+  }, [importedStops, importedShapes, showStops, showShapes]);
 
   function handleLocate() {
     const map = mapRef.current;
@@ -113,6 +174,7 @@ export function MapPreview({
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
+        if (mapRef.current !== map) return;
         const { latitude, longitude, accuracy } = position.coords;
         const point = L.latLng(latitude, longitude);
         locationLayer.clearLayers();
@@ -142,6 +204,7 @@ export function MapPreview({
         );
       },
       (error) => {
+        if (mapRef.current !== map) return;
         setLocationStatus('error');
         setLocationMessage(locationErrorMessage(error));
       },
@@ -150,15 +213,13 @@ export function MapPreview({
   }
 
   return (
-    <section className="map-preview" aria-labelledby="map-preview-title">
+    <section className="map-preview" aria-labelledby={titleId}>
       <div className="map-preview-heading">
         <div>
           <p className="section-kicker">CARTOGRAFÍA INTERACTIVA</p>
-          <h2 id="map-preview-title">Mapa de Salta</h2>
+          <h2 id={titleId}>{hasImport ? 'Mapa del conjunto local' : 'Mapa de Salta'}</h2>
         </div>
-        <span className="phase-tag">
-          {importedStops.length || importedShapes.length ? 'Importación local' : 'Mapa base'}
-        </span>
+        <span className="phase-tag">{hasImport ? 'Importación local' : 'Mapa base'}</span>
       </div>
 
       <div className="map-toolbar">
@@ -173,13 +234,76 @@ export function MapPreview({
         </button>
       </div>
 
+      {hasImport && (
+        <fieldset className="map-layer-controls">
+          <legend>Capas del conjunto importado</legend>
+          <label>
+            <input
+              type="checkbox"
+              checked={showStops}
+              onChange={(e) => setShowStops(e.target.checked)}
+            />{' '}
+            Paradas
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              checked={showShapes}
+              onChange={(e) => setShowShapes(e.target.checked)}
+            />{' '}
+            Geometrías verificadas
+          </label>
+        </fieldset>
+      )}
+      {tileStatus === 'loading' && (
+        <p role="status" className="map-provider-note">
+          Cargando cartografía del proveedor…
+        </p>
+      )}
+      {tileStatus === 'error' && (
+        <div className="map-tile-error" role="status">
+          <p>
+            No se pudieron cargar todas las teselas. Las capas locales pueden seguir consultándose.
+          </p>
+          <button
+            type="button"
+            className="secondary-button"
+            onClick={() => tileLayerRef.current?.redraw()}
+          >
+            Reintentar cartografía
+          </button>
+        </div>
+      )}
       <div
         className="leaflet-map-canvas"
         ref={mapElementRef}
         role="application"
-        aria-label="Mapa interactivo de calles de Salta"
+        aria-label={
+          hasImport
+            ? 'Mapa interactivo del conjunto importado'
+            : 'Mapa interactivo de calles de Salta'
+        }
       />
 
+      {hasImport && (
+        <p className="map-provider-note">
+          Solo datos importados por vos. Con más de 200 paradas, se agrupan visualmente según el
+          zoom; los grupos no son ubicaciones de vehículos. Usá los filtros para consultar paradas
+          coincidentes.
+        </p>
+      )}
+      {selectedStop && (
+        <aside className="map-stop-detail" aria-label="Parada seleccionada">
+          <strong>{selectedStop.name || selectedStop.id}</strong>
+          <p>
+            ID: {selectedStop.id} ·{' '}
+            {selectedStop.coordinates?.join(', ') || 'Sin coordenadas válidas'} · Importación local
+          </p>
+          <button type="button" className="secondary-button" onClick={() => setSelectedId('')}>
+            Cerrar parada
+          </button>
+        </aside>
+      )}
       {locationStatus === 'requesting' && (
         <StateNotice kind="loading" title="Esperando permiso y ubicación">
           El navegador puede pedirte permiso. No hace falta compartir tu ubicación para usar el
