@@ -2,20 +2,20 @@
 
 Los estados reflejan lo que está implementado y verificado en el repositorio, no una promesa de disponibilidad de transporte. Una fase se considera terminada cuando cumple sus criterios verificables, incluidas las pruebas pertinentes.
 
-| Fase        | Alcance                              | Estado / criterio principal                                                                                                                    |
-| ----------- | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| 0           | Auditoría y planificación            | Completada: repositorio auditado y hoja de ruta definida.                                                                                      |
-| 1           | Base técnica profesional             | Integrada en main: TypeScript, lint, formato, pruebas y build.                                                                                 |
-| 2           | Diseño del producto y experiencia    | Integrada en main: navegación, formularios transparentes, estados accesibles y diseño adaptable.                                               |
-| 3           | Mapa y geolocalización               | Integrada en main: cartografía base interactiva; ubicación solo por acción explícita.                                                          |
-| 4           | Investigación de datos de SAETA      | Auditoría documentada; falta confirmar feed reutilizable y licencia con los responsables.                                                      |
-| 5           | Preparación e inspección de GTFS     | Inspector local incorporado: parseo CSV, conteos, referencias, coordenadas, fechas y secuencias básicas. No conecta ni activa feeds.           |
-| 6           | Vista previa local                   | Integrada mediante PR #6; CI y publicación aprobados para 43d1e68.                                                                             |
-| 7           | Exploración y búsqueda integrada     | Implementada en rama: búsqueda conjunta por ID/nombre, detalle, relaciones y mapa local. Reutiliza la importación procesada.                   |
-| 8           | Planificación sobre GTFS importado   | Condicionada a viajes, servicios y horarios suficientes. Sin caminatas, esperas o transbordos inventados.                                      |
-| 9           | Mapa y experiencia visual            | Mejoras progresivas de capas, selección, teselas y rendimiento.                                                                                |
-| 10          | Móvil, accesibilidad y rendimiento   | Pruebas desde 320 px y controles accesibles; PWA solo con comportamiento comprobado.                                                           |
-| Posteriores | Fuentes reales y servicios avanzados | Fuentes autorizadas, actualización, posiciones recientes verificables, alertas, tarjeta/saldo/recargas y seguridad. Nunca simular operaciones. |
+| Fase        | Alcance                              | Estado / criterio principal                                                                                                                                  |
+| ----------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 0           | Auditoría y planificación            | Completada: repositorio auditado y hoja de ruta definida.                                                                                                    |
+| 1           | Base técnica profesional             | Integrada en main: TypeScript, lint, formato, pruebas y build.                                                                                               |
+| 2           | Diseño del producto y experiencia    | Integrada en main: navegación, formularios transparentes, estados accesibles y diseño adaptable.                                                             |
+| 3           | Mapa y geolocalización               | Integrada en main: cartografía base interactiva; ubicación solo por acción explícita.                                                                        |
+| 4           | Investigación de datos de SAETA      | Auditoría documentada; falta confirmar feed reutilizable y licencia con los responsables.                                                                    |
+| 5           | Preparación e inspección de GTFS     | Inspector local incorporado: parseo CSV, conteos, referencias, coordenadas, fechas y secuencias básicas. No conecta ni activa feeds.                         |
+| 6           | Vista previa local                   | Integrada mediante PR #6; CI y publicación aprobados para 43d1e68.                                                                                           |
+| 7           | Exploración y búsqueda integrada     | Integrada mediante PR #7; búsqueda conjunta, detalles y mapa opcional con CI y publicación aprobados.                                                        |
+| 8           | Planificación sobre GTFS importado   | Implementada en rama: viajes directos con horarios completos, calendarios y excepciones. Excluye frecuencias y datos ambiguos. Sin caminatas ni transbordos. |
+| 9           | Mapa y experiencia visual            | Mejoras progresivas de capas, selección, teselas y rendimiento.                                                                                              |
+| 10          | Móvil, accesibilidad y rendimiento   | Pruebas desde 320 px y controles accesibles; PWA solo con comportamiento comprobado.                                                                         |
+| Posteriores | Fuentes reales y servicios avanzados | Fuentes autorizadas, actualización, posiciones recientes verificables, alertas, tarjeta/saldo/recargas y seguridad. Nunca simular operaciones.               |
 
 ## Criterios globales
 
