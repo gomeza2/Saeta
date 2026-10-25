@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import './MapPreview.css';
+import type { ImportedStop, ImportedShape } from '../data/gtfsPreview';
 import { appConfig } from '../config/env';
 import { StateNotice } from './StateNotice';
 
@@ -19,7 +20,16 @@ function locationErrorMessage(error: GeolocationPositionError): string {
   return 'La solicitud de ubicación tardó demasiado. Podés volver a intentarlo cuando tengas mejor señal.';
 }
 
-export function MapPreview() {
+const emptyStops: ImportedStop[] = [];
+const emptyShapes: ImportedShape[] = [];
+
+export function MapPreview({
+  importedStops = emptyStops,
+  importedShapes = emptyShapes,
+}: {
+  importedStops?: ImportedStop[];
+  importedShapes?: ImportedShape[];
+}) {
   const mapElementRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<L.Map | null>(null);
   const locationLayerRef = useRef<L.LayerGroup | null>(null);
@@ -56,6 +66,34 @@ export function MapPreview() {
       locationLayerRef.current = null;
     };
   }, []);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const layer = L.layerGroup().addTo(map);
+    const bounds = L.latLngBounds([]);
+    for (const stop of importedStops.slice(0, 2000)) {
+      if (!stop.coordinates) continue;
+      const label = document.createElement('span');
+      label.textContent = `${stop.name || 'Sin nombre'} · ${stop.id} · Importación local`;
+      L.circleMarker(stop.coordinates, { radius: 5, color: '#27543d', fillOpacity: 0.8 })
+        .bindPopup(label)
+        .addTo(layer);
+      bounds.extend(stop.coordinates);
+    }
+    let remainingPoints = 100_000;
+    for (const shape of importedShapes) {
+      if (shape.points.length > remainingPoints) continue;
+      remainingPoints -= shape.points.length;
+      L.polyline(shape.points, { color: '#275f91', weight: 3 }).addTo(layer);
+      for (const point of shape.points) bounds.extend(point);
+    }
+    if (bounds.isValid()) map.fitBounds(bounds, { padding: [24, 24], maxZoom: 16, animate: false });
+    return () => {
+      layer.clearLayers();
+      map.removeLayer(layer);
+    };
+  }, [importedStops, importedShapes]);
 
   function handleLocate() {
     const map = mapRef.current;
@@ -118,7 +156,9 @@ export function MapPreview() {
           <p className="section-kicker">CARTOGRAFÍA INTERACTIVA</p>
           <h2 id="map-preview-title">Mapa de Salta</h2>
         </div>
-        <span className="phase-tag">Fase 3</span>
+        <span className="phase-tag">
+          {importedStops.length || importedShapes.length ? 'Importación local' : 'Mapa base'}
+        </span>
       </div>
 
       <div className="map-toolbar">

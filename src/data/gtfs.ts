@@ -30,7 +30,6 @@ export interface GtfsValidationReport {
 }
 
 const MAX_VISIBLE_ISSUES = 50;
-const REQUIRED_FILES = ['agency.txt', 'routes.txt', 'stops.txt', 'trips.txt', 'stop_times.txt'];
 
 function normalizeName(name: string): string {
   return name.split(/[\\/]/).pop()?.trim().toLowerCase() ?? '';
@@ -201,7 +200,7 @@ function checkReference(
   id: string,
   knownIds: Set<string>,
 ): void {
-  if (id && !knownIds.has(id)) {
+  if (!id || !knownIds.has(id)) {
     addIssue(
       issues,
       code,
@@ -229,7 +228,7 @@ function parseDate(date: string): number | null {
 }
 
 function readGtfsTable(
-  files: Map<string, string>,
+  files: Map<string, GtfsTable>,
   file: string,
   issues: GtfsIssue[],
   requiredColumns: string[],
@@ -241,7 +240,7 @@ function readGtfsTable(
       addIssue(issues, 'file_missing', 'error', file, 'Falta este archivo requerido.');
     return null;
   }
-  const table = parseCsvTable(content);
+  const table = content;
   table.errors.forEach((error) => {
     addIssue(issues, 'csv_invalid', 'error', file, error.message, error.row);
   });
@@ -259,9 +258,12 @@ function readGtfsTable(
   return table;
 }
 
-export function validateGtfsFiles(input: Record<string, string>): GtfsValidationReport {
+export function validateGtfsFiles(
+  input: Record<string, string>,
+  parsed?: Map<string, GtfsTable>,
+): GtfsValidationReport {
   const issues: GtfsIssue[] = [];
-  const files = new Map<string, string>();
+  const files = new Map<string, GtfsTable>();
   Object.entries(input).forEach(([name, contents]) => {
     const normalized = normalizeName(name);
     if (files.has(normalized))
@@ -272,13 +274,9 @@ export function validateGtfsFiles(input: Record<string, string>): GtfsValidation
         normalized,
         'Se seleccionó más de un archivo con el mismo nombre.',
       );
-    else files.set(normalized, contents);
+    else files.set(normalized, parsed?.get(normalized) ?? parseCsvTable(contents));
   });
 
-  REQUIRED_FILES.forEach((file) => {
-    if (!files.has(file))
-      addIssue(issues, 'file_missing', 'error', file, 'Falta este archivo requerido.');
-  });
   if (!files.has('calendar.txt') && !files.has('calendar_dates.txt')) {
     addIssue(
       issues,
@@ -329,7 +327,8 @@ export function validateGtfsFiles(input: Record<string, string>): GtfsValidation
   );
 
   const agencyIds =
-    agency && agency.headers.includes('agency_id')
+    agency &&
+    (agency.rows.length > 1 || agency.rows.some(({ values }) => value(values, 'agency_id')))
       ? checkUniqueIds(agency, 'agency.txt', 'agency_id', issues)
       : new Set<string>();
   if (agency && agency.rows.length === 0)
@@ -359,6 +358,8 @@ export function validateGtfsFiles(input: Record<string, string>): GtfsValidation
         /^\d+$/.test(routeTypeText) &&
         Number.isSafeInteger(routeTypeNumber) &&
         ((routeTypeNumber >= 0 && routeTypeNumber <= 7) ||
+          routeTypeNumber === 11 ||
+          routeTypeNumber === 12 ||
           (routeTypeNumber >= 100 && routeTypeNumber <= 1700));
       if (!routeTypeIsSupported) {
         addIssue(
@@ -366,7 +367,7 @@ export function validateGtfsFiles(input: Record<string, string>): GtfsValidation
           'route_type_invalid',
           'error',
           'routes.txt',
-          'route_type debe ser un tipo GTFS válido: 0–7 o un tipo extendido entre 100 y 1700.',
+          'route_type debe ser un tipo GTFS válido: 0–7, 11, 12 o un tipo extendido entre 100 y 1700.',
           row,
         );
       }
@@ -380,7 +381,7 @@ export function validateGtfsFiles(input: Record<string, string>): GtfsValidation
           value(values, 'agency_id'),
           agencyIds,
         );
-      } else if (routes.headers.includes('agency_id') && agencyIds.size > 1) {
+      } else if (agency && agency.rows.length > 1) {
         addIssue(
           issues,
           'agency_reference_missing',
@@ -524,6 +525,68 @@ export function validateGtfsFiles(input: Record<string, string>): GtfsValidation
       );
     });
   }
+
+  const shapes = readGtfsTable(
+    files,
+    'shapes.txt',
+    issues,
+    ['shape_id', 'shape_pt_lat', 'shape_pt_lon', 'shape_pt_sequence'],
+    false,
+  );
+  const shapeIds = new Set<string>();
+  const shapeSequences = new Map<string, Set<number>>();
+  if (shapes) {
+    for (const { row, values } of shapes.rows) {
+      const id = value(values, 'shape_id');
+      if (!id) addIssue(issues, 'shape_id_missing', 'error', 'shapes.txt', 'Falta shape_id.', row);
+      else shapeIds.add(id);
+      const lat = value(values, 'shape_pt_lat');
+      const lon = value(values, 'shape_pt_lon');
+      const decimal = /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$/;
+      if (
+        !decimal.test(lat) ||
+        !decimal.test(lon) ||
+        Math.abs(Number(lat)) > 90 ||
+        Math.abs(Number(lon)) > 180
+      )
+        addIssue(
+          issues,
+          'shape_coordinates_invalid',
+          'error',
+          'shapes.txt',
+          'Las coordenadas de la geometría no son válidas.',
+          row,
+        );
+      const sequenceText = value(values, 'shape_pt_sequence');
+      const sequence = Number(sequenceText);
+      const seen = shapeSequences.get(id) ?? new Set<number>();
+      if (!/^\d+$/.test(sequenceText) || !Number.isSafeInteger(sequence) || seen.has(sequence))
+        addIssue(
+          issues,
+          'shape_sequence_invalid',
+          'error',
+          'shapes.txt',
+          'La secuencia debe ser un entero no negativo único dentro de shape_id.',
+          row,
+        );
+      seen.add(sequence);
+      shapeSequences.set(id, seen);
+    }
+  }
+  if (trips)
+    for (const { row, values } of trips.rows) {
+      const shapeId = value(values, 'shape_id');
+      if (shapeId)
+        checkReference(
+          issues,
+          'shape_reference_invalid',
+          'trips.txt',
+          row,
+          'La geometría',
+          shapeId,
+          shapeIds,
+        );
+    }
 
   const tripSequence = new Map<string, number>();
   if (stopTimes) {

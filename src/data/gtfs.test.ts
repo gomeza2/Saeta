@@ -94,3 +94,50 @@ describe('validateGtfsFiles', () => {
     expect(report.errors).toBeGreaterThan(report.issues.length);
   });
 });
+
+describe('GTFS conditional requirements', () => {
+  it('accepts calendar_dates without calendar and a single agency with no agency_id', () => {
+    const files = { ...validFeed };
+    delete files['calendar.txt'];
+    files['calendar_dates.txt'] = 'service_id,date,exception_type\nweekday,20261025,1';
+    files['agency.txt'] =
+      'agency_id,agency_name,agency_url,agency_timezone\n,Test,https://example.org,America/Argentina/Salta';
+    files['routes.txt'] = 'route_id,route_long_name,route_type\nroute-1,Prueba,3';
+    expect(validateGtfsFiles(files).issues).toEqual([]);
+  });
+  it('requires agency identifiers and route agency references for multiple agencies', () => {
+    const files = {
+      ...validFeed,
+      'agency.txt':
+        'agency_name,agency_url,agency_timezone\nA,https://example.org,UTC\nB,https://example.org,UTC',
+      'routes.txt': 'route_id,route_long_name,route_type\nroute-1,Test,3',
+    };
+    const report = validateGtfsFiles(files);
+    expect(report.issues.some((i) => i.code === 'id_missing' && i.file === 'agency.txt')).toBe(
+      true,
+    );
+    expect(report.issues.some((i) => i.code === 'agency_reference_missing')).toBe(true);
+  });
+  it.each(['11', '12'])('accepts the GTFS core route type %s', (type) => {
+    const report = validateGtfsFiles({
+      ...validFeed,
+      'routes.txt': `route_id,route_long_name,route_type\nroute-1,Test,${type}`,
+    });
+    expect(report.valid).toBe(true);
+  });
+  it('reports invalid shape points, duplicate sequences and broken shape references', () => {
+    const report = validateGtfsFiles({
+      ...validFeed,
+      'shapes.txt':
+        'shape_id,shape_pt_lat,shape_pt_lon,shape_pt_sequence\ns,100,-65,1\ns,-24,-65,1',
+      'trips.txt': 'route_id,service_id,trip_id,shape_id\nroute-1,weekday,trip-1,missing',
+    });
+    expect(report.issues.map((i) => i.code)).toEqual(
+      expect.arrayContaining([
+        'shape_coordinates_invalid',
+        'shape_sequence_invalid',
+        'shape_reference_invalid',
+      ]),
+    );
+  });
+});

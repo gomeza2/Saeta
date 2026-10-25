@@ -1,6 +1,7 @@
 import { fireEvent, render, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MapPreview } from './MapPreview';
+import * as L from 'leaflet';
 
 const leafletMocks = vi.hoisted(() => {
   const layer = {
@@ -12,15 +13,19 @@ const leafletMocks = vi.hoisted(() => {
     setView: vi.fn().mockReturnThis(),
     invalidateSize: vi.fn(),
     remove: vi.fn(),
+    removeLayer: vi.fn(),
+    fitBounds: vi.fn(),
   };
   return { layer, map };
 });
 
 vi.mock('leaflet', () => ({
   map: vi.fn(() => leafletMocks.map),
+  latLngBounds: vi.fn(() => ({ extend: vi.fn(), isValid: () => true })),
   tileLayer: vi.fn(() => leafletMocks.layer),
   layerGroup: vi.fn(() => leafletMocks.layer),
   latLng: vi.fn((lat: number, lng: number) => ({ lat, lng })),
+  polyline: vi.fn(() => leafletMocks.layer),
   circle: vi.fn(() => leafletMocks.layer),
   circleMarker: vi.fn(() => leafletMocks.layer),
 }));
@@ -79,4 +84,32 @@ describe('MapPreview', () => {
       getByRole('application', { name: 'Mapa interactivo de calles de Salta' }),
     ).toBeInTheDocument();
   });
+});
+
+it('renders only supplied coordinates and verified shapes, escaping popup text and removing old layers', () => {
+  const { rerender } = render(
+    <MapPreview
+      importedStops={[
+        { id: 'synthetic', name: '<img src=x onerror=alert(1)>', coordinates: [-24, -65] },
+        { id: 'bad', name: 'No point', coordinates: null },
+      ]}
+      importedShapes={[
+        {
+          id: 'shape',
+          points: [
+            [-24, -65],
+            [-25, -66],
+          ],
+        },
+      ]}
+    />,
+  );
+  expect(L.circleMarker).toHaveBeenCalledTimes(1);
+  expect(L.polyline).toHaveBeenCalledTimes(1);
+  const popup = leafletMocks.layer.bindPopup.mock.calls[0]?.[0] as HTMLElement;
+  expect(popup.textContent).toContain('<img src=x onerror=alert(1)>');
+  expect(popup.querySelector('img')).toBeNull();
+  rerender(<MapPreview importedStops={[]} importedShapes={[]} />);
+  expect(leafletMocks.layer.clearLayers).toHaveBeenCalled();
+  expect(leafletMocks.map.removeLayer).toHaveBeenCalled();
 });
