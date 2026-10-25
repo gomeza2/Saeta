@@ -30,7 +30,7 @@ const viewContent: Record<AppView, { eyebrow: string; title: string; description
     eyebrow: 'DATOS Y VALIDACIÓN',
     title: 'Revisá un conjunto de transporte',
     description:
-      'Prepará y revisá archivos GTFS localmente. Este inspector no conecta fuentes ni activa datos en el mapa.',
+      'Prepará y revisá archivos GTFS localmente. Filtrá líneas y paradas y abrí una vista geográfica opcional del conjunto importado.',
   },
   info: {
     eyebrow: 'TRANSPARENCIA',
@@ -109,18 +109,18 @@ export function App() {
               a SAETA.
             </p>
           </div>
-          <div className="phase-stamp" aria-label="Fase 5: datos y validación local">
-            <span className="phase-stamp-number">05</span>
+          <div className="phase-stamp" aria-label="Fase 6: vista previa local">
+            <span className="phase-stamp-number">06</span>
             <span className="phase-stamp-copy">
               <strong>Fase actual</strong>
-              <span>Datos y validación local</span>
+              <span>Vista previa local</span>
             </span>
           </div>
         </section>
 
         <PrimaryNavigation activeView={activeView} onChange={changeView} />
 
-        <div className="workspace">
+        <div className={activeView === 'data' ? 'workspace workspace-data' : 'workspace'}>
           <section className="action-panel" aria-labelledby="panel-title">
             <div className="action-panel-heading">
               <p className="section-kicker">{content.eyebrow}</p>
@@ -284,10 +284,12 @@ export function App() {
                 </p>
               </div>
             )}
-            {activeView === 'data' && <GtfsInspector />}
+            <div hidden={activeView !== 'data'}>
+              <GtfsInspector />
+            </div>
           </section>
 
-          <div className="visual-column">
+          <div className="visual-column" hidden={activeView === 'data'}>
             <MapPreview />
             <TransportStatus />
           </div>

@@ -4,17 +4,17 @@ SAETA MAPS es una aplicación web independiente en desarrollo para explorar opci
 
 ## Estado del proyecto
 
-Las fases 1 a 4 están integradas en `main`. La Fase 5 agrega un inspector local para revisar conjuntos GTFS antes de considerar una integración real.
+Las fases 1 a 4 están integradas en `main`. La Fase 6 agrega una vista previa local de líneas, paradas y geometrías GTFS. Su integración en `main` y publicación deben comprobarse en GitHub.
 
 - **Base técnica:** React, TypeScript, Vite, ESLint, Prettier y Vitest.
 - **Interfaz:** secciones Explorar, Planificar, Guardados, Datos e Información.
 - **Mapa:** cartografía interactiva con Leaflet y OpenStreetMap, centrada de forma general en Salta.
 - **Geolocalización:** solo se solicita después de una acción explícita.
-- **Inspección GTFS:** la pestaña Datos analiza localmente archivos de texto seleccionados por el usuario.
+- **Inspección GTFS:** la pestaña Datos analiza archivos locales, filtra líneas y paradas y permite abrir una vista geográfica explícita.
 
 ### Qué funciona y qué falta
 
-El mapa base puede mostrar calles reales y el inspector permite revisar parte de la estructura de un feed GTFS. **Todavía no están integrados los datos de transporte de SAETA**: no hay búsquedas reales de líneas o paradas, cálculo real de itinerarios, horarios verificados, posiciones en vivo, alertas ni recargas. El inspector no es un validador oficial completo y no conecta ni activa un feed dentro del mapa.
+El mapa base puede mostrar calles reales y el inspector permite revisar parte de la estructura de un feed GTFS. **Todavía no están integrados los datos de transporte de SAETA**: no hay búsquedas reales de líneas o paradas, cálculo real de itinerarios, horarios verificados, posiciones en vivo, alertas ni recargas. El inspector no es un validador oficial completo. La vista previa geográfica usa únicamente los archivos importados y no conecta una fuente de SAETA.
 
 No se inventan líneas, paradas, horarios ni ubicaciones. Para integrar transporte falta identificar y validar una fuente oficial o autorizada, su licencia, cobertura, vigencia y frecuencia de actualización. Consultá [la auditoría de fuentes](docs/DATA_SOURCE_AUDIT.md) y [la guía del inspector GTFS](docs/GTFS_IMPORT.md).
 
@@ -79,7 +79,7 @@ npm run preview
 
 ## Privacidad y uso responsable
 
-Los archivos GTFS elegidos en la pestaña Datos se leen en la pestaña del navegador y no se suben a un servidor ni se incorporan al mapa. La geolocalización del dispositivo solo se solicita mediante una acción explícita. La aplicación no debe presentar la ubicación del usuario como posición de un colectivo ni sugerir seguimiento en tiempo real sin una fuente verificada.
+Los archivos GTFS elegidos en la pestaña Datos se leen en la pestaña del navegador y no se suben a un servidor ni se guardan de forma persistente. La vista geográfica local es opcional y se elimina al limpiar o reemplazar la importación. La geolocalización del dispositivo solo se solicita mediante una acción explícita. La aplicación no debe presentar la ubicación del usuario como posición de un colectivo ni sugerir seguimiento en tiempo real sin una fuente verificada.
 
 ## Publicación
 

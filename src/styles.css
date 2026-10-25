@@ -1252,3 +1252,111 @@ a:focus-visible {
     gap: 6px;
   }
 }
+
+/* Vista previa local: filtros y listas acotadas para conjuntos extensos. */
+[hidden] {
+  display: none !important;
+}
+.workspace-data {
+  grid-template-columns: minmax(0, 1fr);
+}
+.gtfs-preview {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.gtfs-preview h3,
+.gtfs-preview h4,
+.gtfs-preview p {
+  margin: 0;
+}
+.gtfs-preview p {
+  font-size: 13px;
+  line-height: 1.65;
+}
+.gtfs-local-notice {
+  padding: 14px;
+  border-left: 3px solid var(--color-green);
+  background: var(--color-green-light);
+}
+.gtfs-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+.gtfs-preview-grid section {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-width: 0;
+}
+.gtfs-preview label {
+  font-size: 13px;
+  font-weight: 700;
+}
+.gtfs-preview input {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 9px;
+}
+.gtfs-results {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  max-height: 400px;
+  overflow: auto;
+  list-style: none;
+  margin: 0;
+  padding: 3px;
+}
+.gtfs-results li,
+.gtfs-results button {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.gtfs-results li > strong,
+.gtfs-results li > span,
+.gtfs-results button > strong,
+.gtfs-results button > span {
+  display: block;
+  margin: 4px 0;
+}
+.gtfs-results li {
+  padding: 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 9px;
+  font-size: 13px;
+}
+.gtfs-results button {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  text-align: left;
+}
+.gtfs-results button[aria-pressed='true'] {
+  border-color: var(--color-green);
+  background: var(--color-green-light);
+}
+.gtfs-pagination {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 13px;
+}
+.gtfs-pagination button {
+  min-height: 44px;
+}
+@media (max-width: 620px) {
+  .gtfs-preview-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
