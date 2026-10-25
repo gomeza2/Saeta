@@ -11,7 +11,11 @@ La aplicación requiere compilar Vite y publicar `dist`, no servir el TypeScript
 
 Para `803c5a1f0af494388a2dd4a3662005cf134abfef`, el resumen público de [calidad](https://github.com/gomeza2/Saeta/actions/runs/40202801467) indica Success. El de [publicación](https://github.com/gomeza2/Saeta/actions/runs/40202801464) indica Success en build y deploy y registra `https://gomeza2.github.io/Saeta/` como destino.
 
-El entorno de desarrollo recibió un bloqueo CONNECT 403 al solicitar ese destino y la API de GitHub. Por eso esta evidencia no confirma el contenido público actual, la configuración de Source ni la carga de assets en un navegador externo. Los dominios `api.github.com`, `gomeza2.github.io` y `tile.openstreetmap.org` se solicitaron en el borrador de configuración del entorno; guardar el borrador no aplica la política ni publica el sitio.
+El bloqueo CONNECT inicial dejó de reproducirse. Se comprobó que la URL pública entrega HTML con bundles compilados y que ambos assets JS/CSS responden HTTP 200 con sus tipos de contenido correctos.
+
+La API de Pages confirmó `build_type: legacy`, con fuente `main` y `/`. Se intentó cambiar a `workflow` con la API oficial y GitHub respondió HTTP 403: `Resource not accessible by integration`. La identidad de la integración permite ramas y pull requests, pero no ese ajuste de Pages. Queda pendiente que un administrador seleccione **GitHub Actions** en el recorrido de Settings indicado arriba. No se ha confirmado ese cambio.
+
+Una solicitud de tesela respondió con una imagen de denegación y cabecera `x-blocked: Access denied` del proveedor. Esa respuesta no verifica cartografía útil aunque su HTTP sea 200. Las pruebas locales de capas excluyen las teselas externas.
 
 ## Comprobación después de publicar
 
