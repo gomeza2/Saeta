@@ -10,6 +10,7 @@ export interface GtfsIssue {
 
 export interface GtfsTable {
   headers: string[];
+  headerRow?: number;
   rows: Array<{ row: number; values: Record<string, string> }>;
   errors: Array<{ row?: number; message: string }>;
   errorCount?: number;
@@ -46,6 +47,9 @@ function normalizeName(name: string): string {
 export function parseCsvTable(content: string): GtfsTable {
   const source = content.replace(/^\uFEFF/, '');
   const records: string[][] = [];
+  const recordLines: number[] = [];
+  let physicalLine = 1;
+  let recordStartLine = 1;
   const errors: Array<{ row?: number; message: string }> = [];
   let errorCount = 0;
   const recordError = (error: { row?: number; message: string }) => {
@@ -58,6 +62,7 @@ export function parseCsvTable(content: string): GtfsTable {
     message = 'El archivo supera 100 000 filas de datos; no se procesó para limitar el uso de memoria.',
   ): GtfsTable => ({
     headers: (records[0] ?? []).map((h) => h.trim()),
+    headerRow: recordLines[0],
     rows: [],
     errors: [{ message }],
     errorCount: 1,
@@ -81,7 +86,10 @@ export function parseCsvTable(content: string): GtfsTable {
     finishCell();
     if (recordHasContent || record.some((value) => value.trim() !== '')) {
       if (records.length >= MAX_TABLE_ROWS + 1) exceededRows = true;
-      else records.push(record);
+      else {
+        records.push(record);
+        recordLines.push(recordStartLine);
+      }
     }
     record = [];
     recordHasContent = false;
@@ -92,6 +100,8 @@ export function parseCsvTable(content: string): GtfsTable {
       return limitResult('Un campo supera 1 000 000 de caracteres; no se procesó el archivo.');
     const character = source.charAt(index);
     if (inQuotes) {
+      if (character === '\r' || (character === '\n' && source.charAt(index - 1) !== '\r'))
+        physicalLine += 1;
       if (character === '"') {
         if (source.charAt(index + 1) === '"') {
           cell += '"';
@@ -115,7 +125,7 @@ export function parseCsvTable(content: string): GtfsTable {
       character !== '\t'
     ) {
       recordError({
-        row: records.length + 2,
+        row: recordStartLine,
         message: 'Hay texto inesperado después de un campo entre comillas.',
       });
       afterQuote = false;
@@ -130,6 +140,8 @@ export function parseCsvTable(content: string): GtfsTable {
     } else if (character === '\n' || character === '\r') {
       if (character === '\r' && source.charAt(index + 1) === '\n') index += 1;
       finishRecord();
+      physicalLine += 1;
+      recordStartLine = physicalLine;
     } else {
       cell += character;
       if (character.trim() !== '') recordHasContent = true;
@@ -145,7 +157,7 @@ export function parseCsvTable(content: string): GtfsTable {
     return limitResult('Un campo supera 1 000 000 de caracteres; no se procesó el archivo.');
   if (inQuotes) {
     recordError({
-      row: records.length + 2,
+      row: recordStartLine,
       message: 'Hay un campo entre comillas que no se cerró.',
     });
   }
@@ -165,18 +177,20 @@ export function parseCsvTable(content: string): GtfsTable {
   }
 
   const headers = (records[0] ?? []).map((header) => header.trim());
+  const headerRow = recordLines[0] ?? 1;
   const duplicateHeaders = headers.filter(
     (header, index) => header !== '' && headers.indexOf(header) !== index,
   );
   if (headers.some((header) => header === ''))
-    recordError({ row: 1, message: 'La cabecera contiene una columna sin nombre.' });
+    recordError({ row: headerRow, message: 'La cabecera contiene una columna sin nombre.' });
   if (duplicateHeaders.length > 0)
-    recordError({ row: 1, message: 'La cabecera contiene nombres de columna repetidos.' });
+    recordError({ row: headerRow, message: 'La cabecera contiene nombres de columna repetidos.' });
 
   const rows = records.slice(1).map((values, index) => {
+    const row = recordLines[index + 1] ?? index + 2;
     if (values.length !== headers.length) {
       recordError({
-        row: index + 2,
+        row,
         message: `Se esperaban ${headers.length} columnas y se encontraron ${values.length}.`,
       });
     }
@@ -184,9 +198,9 @@ export function parseCsvTable(content: string): GtfsTable {
     headers.forEach((header, column) => {
       if (header) mapped[header] = (values[column] ?? '').trim();
     });
-    return { row: index + 2, values: mapped };
+    return { row, values: mapped };
   });
-  return { headers, rows, errors, errorCount };
+  return { headers, headerRow, rows, errors, errorCount };
 }
 
 function hasColumns(table: GtfsTable, required: string[]): boolean {
@@ -300,7 +314,7 @@ function readGtfsTable(
       'error',
       file,
       `Faltan columnas requeridas: ${missing.join(', ')}.`,
-      1,
+      table.headerRow ?? 1,
     );
   }
   return table;
@@ -667,7 +681,7 @@ export function validateGtfsFiles(
         );
     }
 
-  const tripSequence = new Map<string, number>();
+  const tripSequences = new Map<string, Set<number>>();
   if (stopTimes) {
     stopTimes.rows.forEach(({ row, values }) => {
       const tripId = value(values, 'trip_id');
@@ -702,18 +716,19 @@ export function validateGtfsFiles(
           row,
         );
       } else if (tripId) {
-        const previous = tripSequence.get(tripId);
-        if (previous !== undefined && sequence <= previous) {
+        const seen = tripSequences.get(tripId) ?? new Set<number>();
+        if (seen.has(sequence)) {
           addIssue(
             issues,
-            'stop_sequence_order',
+            'stop_sequence_duplicate',
             'error',
             'stop_times.txt',
-            `Las secuencias del viaje "${tripId}" deben aumentar.`,
+            `stop_sequence ${sequence} está repetido en el viaje "${tripId}".`,
             row,
           );
         }
-        tripSequence.set(tripId, sequence);
+        seen.add(sequence);
+        tripSequences.set(tripId, seen);
       }
       const timePattern = /^\d{1,3}:[0-5]\d:[0-5]\d$/;
       for (const column of ['arrival_time', 'departure_time']) {

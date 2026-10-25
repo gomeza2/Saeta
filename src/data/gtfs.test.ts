@@ -183,3 +183,77 @@ it('rejects excessively wide tables and oversized fields before retaining unboun
     /1 000 000 de caracteres/,
   );
 });
+
+describe('sequence order and CSV source positions', () => {
+  it('accepts interleaved trips and stop records whose sequence order differs from file order', () => {
+    const report = validateGtfsFiles({
+      ...validFeed,
+      'trips.txt': 'route_id,service_id,trip_id\nroute-1,weekday,trip-1\nroute-1,weekday,trip-2',
+      'stop_times.txt': [
+        'trip_id,arrival_time,departure_time,stop_id,stop_sequence',
+        'trip-1,06:15:00,06:15:00,stop-2,20',
+        'trip-2,07:00:00,07:00:00,stop-1,0',
+        'trip-1,06:00:00,06:00:00,stop-1,0',
+        'trip-2,07:15:00,07:15:00,stop-2,20',
+      ].join('\n'),
+    });
+    expect(report.issues).toEqual([]);
+  });
+  it('rejects duplicate sequences within a trip even when separated by other records', () => {
+    const report = validateGtfsFiles({
+      ...validFeed,
+      'stop_times.txt': [
+        'trip_id,arrival_time,departure_time,stop_id,stop_sequence',
+        'trip-1,06:00:00,06:00:00,stop-1,1',
+        'trip-1,06:15:00,06:15:00,stop-2,2',
+        'trip-1,06:30:00,06:30:00,stop-1,1',
+      ].join('\n'),
+    });
+    expect(report.issues).toContainEqual(
+      expect.objectContaining({ code: 'stop_sequence_duplicate', file: 'stop_times.txt', row: 4 }),
+    );
+  });
+  it.each(['\n', '\r\n', '\r'])(
+    'keeps source line numbers across blank and quoted multiline records (%j)',
+    (eol) => {
+      const table = parseCsvTable(
+        ['', 'stop_id,stop_name', '', 'stop-1,"First', 'second"', 'stop-2'].join(eol),
+      );
+      expect(table.rows.map((row) => row.row)).toEqual([4, 6]);
+      expect(table.errors).toEqual([
+        { row: 6, message: 'Se esperaban 2 columnas y se encontraron 1.' },
+      ]);
+    },
+  );
+  it('points CSV quoting and missing-column errors at their original record or header line', () => {
+    const unclosed = parseCsvTable('\nstop_id,stop_name\n\nstop-1,"First\nsecond');
+    expect(unclosed.errors).toContainEqual(
+      expect.objectContaining({ row: 4, message: 'Hay un campo entre comillas que no se cerró.' }),
+    );
+    const report = validateGtfsFiles({ ...validFeed, 'routes.txt': '\n\nroute_id\nroute-1' });
+    expect(report.issues).toContainEqual(
+      expect.objectContaining({ code: 'columns_missing', file: 'routes.txt', row: 3 }),
+    );
+  });
+});
+
+it('propagates source lines into validation issues after a quoted multiline stop name', () => {
+  const report = validateGtfsFiles({
+    ...validFeed,
+    'stops.txt':
+      '\nstop_id,stop_name,stop_lat,stop_lon\n\nstop-1,"First\nsecond",-24,-65\nstop-2,Other,100,-65',
+  });
+  expect(report.issues).toContainEqual(
+    expect.objectContaining({ code: 'latitude_invalid', file: 'stops.txt', row: 6 }),
+  );
+  const malformed = parseCsvTable('\nstop_id,stop_name\n\nstop-1,"First\nsecond"unexpected');
+  expect(malformed.errors).toContainEqual(
+    expect.objectContaining({
+      row: 4,
+      message: 'Hay texto inesperado después de un campo entre comillas.',
+    }),
+  );
+  expect(parseCsvTable('\n\nid,id\n1,2').errors).toContainEqual(
+    expect.objectContaining({ row: 3 }),
+  );
+});
