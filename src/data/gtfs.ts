@@ -356,7 +356,7 @@ export function validateGtfsFiles(input: Record<string, string>): GtfsValidation
       const routeTypeText = value(values, 'route_type');
       const routeTypeNumber = Number(routeTypeText);
       const routeTypeIsSupported =
-        /^\\d+$/.test(routeTypeText) &&
+        /^\d+$/.test(routeTypeText) &&
         Number.isSafeInteger(routeTypeNumber) &&
         ((routeTypeNumber >= 0 && routeTypeNumber <= 7) ||
           (routeTypeNumber >= 100 && routeTypeNumber <= 1700));
