@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { MapPreview } from './components/MapPreview';
+import { GtfsPlanner } from './components/GtfsPlanner';
 import { GtfsExplorer } from './components/GtfsExplorer';
 import type { GtfsPreviewData } from './data/gtfsPreview';
 import { GtfsInspector } from './components/GtfsInspector';
@@ -53,6 +54,7 @@ export function App() {
   const [plannerFeedback, setPlannerFeedback] = useState('');
 
   const content = viewContent[activeView];
+  const localPlanner = activeView === 'planner' && localData !== null;
   const localExplore = activeView === 'explore' && localData !== null;
 
   function handleImport(data: GtfsPreviewData | null) {
@@ -119,11 +121,11 @@ export function App() {
               a SAETA.
             </p>
           </div>
-          <div className="phase-stamp" aria-label="Fase 7: exploración local">
-            <span className="phase-stamp-number">07</span>
+          <div className="phase-stamp" aria-label="Fase 8: horarios locales">
+            <span className="phase-stamp-number">08</span>
             <span className="phase-stamp-copy">
               <strong>Fase actual</strong>
-              <span>Exploración local</span>
+              <span>Horarios locales</span>
             </span>
           </div>
         </section>
@@ -132,14 +134,22 @@ export function App() {
 
         <div
           className={
-            activeView === 'data' || localExplore ? 'workspace workspace-data' : 'workspace'
+            activeView === 'data' || localExplore || localPlanner
+              ? 'workspace workspace-data'
+              : 'workspace'
           }
         >
           <section className="action-panel" aria-labelledby="panel-title">
             <div className="action-panel-heading">
               <p className="section-kicker">{content.eyebrow}</p>
               <h2 id="panel-title">{content.title}</h2>
-              <p>{content.description}</p>
+              <p>
+                {localPlanner
+                  ? 'Consultá horarios publicados de viajes directos en el conjunto importado, sin estimaciones ni transbordos.'
+                  : localExplore
+                    ? 'Buscá líneas y paradas en tus archivos locales y abrí sus detalles.'
+                    : content.description}
+              </p>
             </div>
 
             {localExplore && <GtfsExplorer key={importVersion} data={localData} />}
@@ -208,7 +218,8 @@ export function App() {
               </div>
             )}
 
-            {activeView === 'planner' && (
+            {localPlanner && <GtfsPlanner key={importVersion} data={localData} />}
+            {activeView === 'planner' && !localData && (
               <form className="planner-form" onSubmit={handlePlannerSubmit}>
                 <div className="form-field">
                   <label htmlFor="trip-origin">Origen</label>
@@ -304,7 +315,10 @@ export function App() {
             </div>
           </section>
 
-          <div className="visual-column" hidden={activeView === 'data' || localExplore}>
+          <div
+            className="visual-column"
+            hidden={activeView === 'data' || localExplore || localPlanner}
+          >
             <MapPreview />
             <TransportStatus />
           </div>

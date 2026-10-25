@@ -1,3 +1,4 @@
+import { buildGtfsSchedule, type ImportedSchedule } from './gtfsSchedule';
 import { parseCsvTable, type GtfsTable } from './gtfs';
 
 export interface ImportedStop {
@@ -21,6 +22,7 @@ export interface GtfsPreviewData {
   routes: ImportedRoute[];
   stops: ImportedStop[];
   shapes: ImportedShape[];
+  schedule?: ImportedSchedule;
 }
 
 /** Excludes malformed CSV tables and ambiguous identifiers from the preview. */
@@ -125,5 +127,10 @@ export function buildGtfsPreview(
       route.shapeIds.push(v.shape_id!);
   }
   const referencedShapes = new Set(routes.flatMap((route) => route.shapeIds));
-  return { routes, stops, shapes: shapes.filter((shape) => referencedShapes.has(shape.id)) };
+  return {
+    routes,
+    stops,
+    shapes: shapes.filter((shape) => referencedShapes.has(shape.id)),
+    schedule: buildGtfsSchedule(tables, new Set(routeById.keys()), stopIds),
+  };
 }

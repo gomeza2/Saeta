@@ -55,3 +55,11 @@ Las suites de `src/data/gtfs.test.ts`, `src/data/gtfsPreview.test.ts` y `src/com
 Después de importar, abrí **Explorar**. La búsqueda filtra conjuntamente identificadores y nombres de líneas y paradas, con resultados paginados. Cada resultado abre su detalle. Las líneas muestran sus paradas relacionadas; las paradas muestran las coordenadas válidas disponibles. La selección puede abrirse en el mapa local mediante un botón explícito. Si no hay resultados o relaciones, se explica qué falta.
 
 Se comparte la estructura ya procesada en memoria: cambiar de pestaña o buscar no vuelve a leer ni parsear los archivos. Limpiar o reemplazar desde Datos elimina también el catálogo explorado y sus capas. No existe búsqueda remota ni fuente oficial conectada.
+
+## Horarios publicados del conjunto local (Fase 8)
+
+**Planificar** consulta viajes directos únicamente si el conjunto permite procesar una zona horaria de agencia única, calendarios válidos, viajes, paradas y horas explícitas de llegada/salida. Elegí origen y destino por sus IDs y la fecha de servicio del feed. Se respetan días semanales y excepciones de altas/bajas; las horas superiores a 24:00 pertenecen a esa fecha de servicio.
+
+Se excluyen viajes con IDs ambiguos, referencias rotas, secuencias repetidas, horas ausentes o regresivas y plantillas de `frequencies.txt`. Los puntos de ascenso/descenso que requieren llamada, coordinación o están prohibidos no se ofrecen como extremos normales. No se interpola ni se calculan esperas, caminatas o transbordos. Si no hay datos suficientes o coincidencias, se explica sin inventar alternativas.
+
+Los resultados son horarios publicados en los archivos, no predicciones ni confirmaciones de que el servicio exista o esté vigente. Se muestran hasta 20 viajes, ordenados por salida, junto al conteo total. Cambiar los campos descarta el resultado anterior y reemplazar o limpiar la importación elimina los horarios procesados. Los tests usan únicamente conjuntos sintéticos.
