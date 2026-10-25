@@ -80,3 +80,30 @@ describe('App', () => {
     expect(getByText(/no se suben ni se guardan en un servidor/i)).toBeInTheDocument();
   });
 });
+
+it('shares the local import with Explore and removes it everywhere when cleared', async () => {
+  const { previewFiles } = await import('./test/gtfsFixture');
+  const { getByRole, getByLabelText, findByRole, queryByRole } = render(<App />);
+  fireEvent.click(getByRole('button', { name: 'Datos' }));
+  fireEvent.change(getByLabelText(/Elegir archivos GTFS/), {
+    target: {
+      files: Object.entries(previewFiles).map(([name, text]) => ({
+        name,
+        size: text.length,
+        text: () => Promise.resolve(text),
+      })),
+    },
+  });
+  await findByRole('heading', { name: 'Vista previa del conjunto importado' });
+  fireEvent.click(getByRole('button', { name: 'Explorar' }));
+  expect(getByRole('heading', { name: 'Explorar el conjunto local' })).toBeInTheDocument();
+  fireEvent.change(getByLabelText('Línea o parada del conjunto importado'), {
+    target: { value: 'r1' },
+  });
+  expect(getByRole('button', { name: /TEST-A/ })).toBeInTheDocument();
+  fireEvent.click(getByRole('button', { name: 'Datos' }));
+  fireEvent.click(getByRole('button', { name: 'Limpiar importación' }));
+  fireEvent.click(getByRole('button', { name: 'Explorar' }));
+  expect(queryByRole('heading', { name: 'Explorar el conjunto local' })).not.toBeInTheDocument();
+  expect(getByLabelText('Línea o parada')).toBeInTheDocument();
+});

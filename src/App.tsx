@@ -1,5 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { MapPreview } from './components/MapPreview';
+import { GtfsExplorer } from './components/GtfsExplorer';
+import type { GtfsPreviewData } from './data/gtfsPreview';
 import { GtfsInspector } from './components/GtfsInspector';
 import { PrimaryNavigation } from './components/PrimaryNavigation';
 import { StateNotice } from './components/StateNotice';
@@ -41,6 +43,8 @@ const viewContent: Record<AppView, { eyebrow: string; title: string; description
 };
 
 export function App() {
+  const [localData, setLocalData] = useState<GtfsPreviewData | null>(null);
+  const [importVersion, setImportVersion] = useState(0);
   const [activeView, setActiveView] = useState<AppView>('explore');
   const [searchQuery, setSearchQuery] = useState('');
   const [searchFeedback, setSearchFeedback] = useState('');
@@ -49,6 +53,12 @@ export function App() {
   const [plannerFeedback, setPlannerFeedback] = useState('');
 
   const content = viewContent[activeView];
+  const localExplore = activeView === 'explore' && localData !== null;
+
+  function handleImport(data: GtfsPreviewData | null) {
+    setLocalData(data);
+    setImportVersion((version) => version + 1);
+  }
 
   function changeView(view: AppView) {
     setActiveView(view);
@@ -109,18 +119,22 @@ export function App() {
               a SAETA.
             </p>
           </div>
-          <div className="phase-stamp" aria-label="Fase 6: vista previa local">
-            <span className="phase-stamp-number">06</span>
+          <div className="phase-stamp" aria-label="Fase 7: exploración local">
+            <span className="phase-stamp-number">07</span>
             <span className="phase-stamp-copy">
               <strong>Fase actual</strong>
-              <span>Vista previa local</span>
+              <span>Exploración local</span>
             </span>
           </div>
         </section>
 
         <PrimaryNavigation activeView={activeView} onChange={changeView} />
 
-        <div className={activeView === 'data' ? 'workspace workspace-data' : 'workspace'}>
+        <div
+          className={
+            activeView === 'data' || localExplore ? 'workspace workspace-data' : 'workspace'
+          }
+        >
           <section className="action-panel" aria-labelledby="panel-title">
             <div className="action-panel-heading">
               <p className="section-kicker">{content.eyebrow}</p>
@@ -128,7 +142,8 @@ export function App() {
               <p>{content.description}</p>
             </div>
 
-            {activeView === 'explore' && (
+            {localExplore && <GtfsExplorer key={importVersion} data={localData} />}
+            {activeView === 'explore' && !localData && (
               <div className="explore-content">
                 <form className="search-form" onSubmit={handleSearch}>
                   <label htmlFor="route-search">Línea o parada</label>
@@ -285,11 +300,11 @@ export function App() {
               </div>
             )}
             <div hidden={activeView !== 'data'}>
-              <GtfsInspector />
+              <GtfsInspector onPreviewChange={handleImport} />
             </div>
           </section>
 
-          <div className="visual-column" hidden={activeView === 'data'}>
+          <div className="visual-column" hidden={activeView === 'data' || localExplore}>
             <MapPreview />
             <TransportStatus />
           </div>
