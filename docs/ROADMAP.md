@@ -10,8 +10,8 @@ Los estados reflejan lo que está implementado y verificado en el repositorio, n
 | 3           | Mapa y geolocalización               | Integrada en main: cartografía base interactiva; ubicación solo por acción explícita.                                                          |
 | 4           | Investigación de datos de SAETA      | Auditoría documentada; falta confirmar feed reutilizable y licencia con los responsables.                                                      |
 | 5           | Preparación e inspección de GTFS     | Inspector local incorporado: parseo CSV, conteos, referencias, coordenadas, fechas y secuencias básicas. No conecta ni activa feeds.           |
-| 6           | Vista previa local                   | Implementada en rama: líneas, paradas, filtros, relaciones, capas opcionales y limpieza. Fusión y CI remotos pendientes de confirmar.          |
-| 7           | Exploración y búsqueda integrada     | Pendiente de aprobación y fusión de la Fase 6; reutilizar los datos procesados de la importación.                                              |
+| 6           | Vista previa local                   | Integrada mediante PR #6; CI y publicación aprobados para 43d1e68.                                                                             |
+| 7           | Exploración y búsqueda integrada     | Implementada en rama: búsqueda conjunta por ID/nombre, detalle, relaciones y mapa local. Reutiliza la importación procesada.                   |
 | 8           | Planificación sobre GTFS importado   | Condicionada a viajes, servicios y horarios suficientes. Sin caminatas, esperas o transbordos inventados.                                      |
 | 9           | Mapa y experiencia visual            | Mejoras progresivas de capas, selección, teselas y rendimiento.                                                                                |
 | 10          | Móvil, accesibilidad y rendimiento   | Pruebas desde 320 px y controles accesibles; PWA solo con comportamiento comprobado.                                                           |

@@ -49,3 +49,9 @@ Seleccionar archivos no configura una fuente, no publica datos y no conecta un b
 - `npm run build`
 
 Las suites de `src/data/gtfs.test.ts`, `src/data/gtfsPreview.test.ts` y `src/components/GtfsInspector.test.tsx` cubren parsing CSV con comillas, errores de cantidad de columnas, campos no cerrados, un conjunto de prueba coherente, referencias rotas límites del informe, calendarios solo de excepciones, agencias opcionales, filtros, relaciones, limpieza, carreras de lectura y exclusión de geometrías inválidas. Las pruebas de mapa verifican capas y texto seguro en popups.
+
+## Exploración del conjunto local (Fase 7)
+
+Después de importar, abrí **Explorar**. La búsqueda filtra conjuntamente identificadores y nombres de líneas y paradas, con resultados paginados. Cada resultado abre su detalle. Las líneas muestran sus paradas relacionadas; las paradas muestran las coordenadas válidas disponibles. La selección puede abrirse en el mapa local mediante un botón explícito. Si no hay resultados o relaciones, se explica qué falta.
+
+Se comparte la estructura ya procesada en memoria: cambiar de pestaña o buscar no vuelve a leer ni parsear los archivos. Limpiar o reemplazar desde Datos elimina también el catálogo explorado y sus capas. No existe búsqueda remota ni fuente oficial conectada.

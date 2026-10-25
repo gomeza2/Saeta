@@ -6,7 +6,11 @@ import { GtfsPreview } from './GtfsPreview';
 
 const MAX_TOTAL_BYTES = 60 * 1024 * 1024;
 
-export function GtfsInspector() {
+export function GtfsInspector({
+  onPreviewChange,
+}: {
+  onPreviewChange?: (data: GtfsPreviewData | null) => void;
+}) {
   const requestId = useRef(0);
   const [previewVersion, setPreviewVersion] = useState(0);
   const [preview, setPreview] = useState<GtfsPreviewData | null>(null);
@@ -20,6 +24,7 @@ export function GtfsInspector() {
     const selectedFiles = Array.from(event.currentTarget.files ?? []);
     event.currentTarget.value = '';
     setPreview(null);
+    onPreviewChange?.(null);
     setIsValidating(false);
     setReport(null);
     setInputError('');
@@ -54,7 +59,9 @@ export function GtfsInspector() {
       });
       const tables = parseGtfsTables(files);
       setReport(validateGtfsFiles(files, tables));
-      setPreview(buildGtfsPreview(files, tables));
+      const data = buildGtfsPreview(files, tables);
+      setPreview(data);
+      onPreviewChange?.(data);
     } catch {
       if (currentRequest !== requestId.current) return;
       setInputError(
@@ -112,6 +119,7 @@ export function GtfsInspector() {
         onClick={() => {
           requestId.current += 1;
           setPreview(null);
+          onPreviewChange?.(null);
           setReport(null);
           setInputError('');
           setIsValidating(false);
