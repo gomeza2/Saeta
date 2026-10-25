@@ -4,7 +4,7 @@ SAETA MAPS es una aplicación web independiente en desarrollo para explorar opci
 
 ## Estado del proyecto
 
-Las fases 1 a 9 están integradas en `main`; la Fase 10 se desarrolla en esta revisión. Las fases 6 y 7 permiten explorar líneas, paradas y geometrías importadas. La Fase 8 agrega consultas limitadas de viajes directos con horarios publicados, cuando el conjunto contiene los datos necesarios. Las fases 9 y 10 mejoran el mapa, el teclado, los controles móviles y la importación en segundo plano. La integración y publicación de cada revisión deben comprobarse en GitHub.
+Las fases 1 a 10 están integradas en `main`, mediante pull requests y comprobaciones de CI. Las fases 6 y 7 permiten explorar líneas, paradas y geometrías importadas. La Fase 8 agrega consultas limitadas de viajes directos con horarios publicados, cuando el conjunto contiene los datos necesarios. Las fases 9 y 10 mejoran el mapa, el teclado, los controles móviles y la importación en segundo plano. La integración y publicación de cada revisión deben comprobarse en GitHub.
 
 - **Base técnica:** React, TypeScript, Vite, ESLint, Prettier y Vitest.
 - **Interfaz:** secciones Explorar, Planificar, Guardados, Datos e Información.
